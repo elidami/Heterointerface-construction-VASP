@@ -121,7 +121,7 @@ lowest_z_lines = lowest_z_rows(cartesian_coord_bottom_slab,fixed_atoms)
 print(lowest_z_lines)
 
 
-
+'''
 AtomCoordsBottomSlab = []
 for coordinates in cartesian_coord_bottom_slab:
     if fixed_atoms != 0:
@@ -145,12 +145,43 @@ for coordinates in cartesian_coord_bottom_slab:
             "T" if z_relax else "F"
 )
     AtomCoordsBottomSlab.append(coord_string)
+   
 
 AtomCoordsUpperSlab = ["{}  {}  {}  {}\n".format('\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
                         "T" if x_relax else "F",
                         "T" if y_relax else "F",
                         "T" if z_relax else "T"
                          ) for coordinates in shifted_coords]
+ '''
+def write_coords(coords, fixed_atoms, x_relax, y_relax, z_relax, lowest_z_lines):
+    atom_coords = []
+    for coord in coords:
+        if fixed_atoms != 0:
+            if any(np.array_equal(coord, lowest) for lowest in lowest_z_lines):
+                coord_string = "{}\t{}\n".format(
+                    '\t'.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
+                    "F\tF\tF"
+                )
+            else:
+                coord_string = "{}\t{}\t{}\t{}\n".format(
+                    '\t'.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
+                    "T" if x_relax else "F",
+                    "T" if y_relax else "F",
+                    "T" if z_relax else "F"
+                )
+        else:
+            coord_string = "{}\t{}\t{}\t{}\n".format(
+                '\t'.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
+                "T" if x_relax else "F",
+                "T" if y_relax else "F",
+                "T" if z_relax else "F"
+            )
+        atom_coords.append(coord_string)
+    return atom_coords  
+
+
+AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, fixed_atoms, x_relax, y_relax, z_relax, lowest_z_lines)
+AtomCoordsUpperSlab = write_coords(shifted_coords, 0, x_relax, y_relax, z_relax, [])       
 
 HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab,HeaderUpperSlab),"1.0\n"]
 LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
