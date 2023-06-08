@@ -84,3 +84,84 @@ slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab
 
 shift_z = cartesian_coord_bottom_slab[-1][2]+slabs_distance-cartesian_coord_upper_slab[-1][2]
 shifted_coords = shift_coordinates(reflected_coords,shift_x,shift_y,shift_z)
+
+
+OutputFile = open("POSCAR","w")
+with open('upper_slab.txt', 'r') as f:
+    upper_slab_lines = f.readlines()
+    HeaderUpperSlab = upper_slab_lines[0].strip()
+    AtomTypeUpperSlab = upper_slab_lines[5].strip()
+    AtomNumberUpperSlab = upper_slab_lines[6].strip()
+
+
+with open('bottom_slab.txt', 'r') as f:
+    bottom_slab_lines = f.readlines()
+    HeaderBottomSlab = bottom_slab_lines[0].strip()
+    AtomTypeBottomSlab = bottom_slab_lines[5].strip()
+    AtomNumberBottomSlab = bottom_slab_lines[6].strip()
+
+x_relax = True
+y_relax = True
+z_relax = True
+fixed_atoms = 0
+
+def lowest_z_rows(coord,fixed_atoms):
+    sorted_coord = sorted(coord, key=lambda x: x[2])
+    fixed_atoms = fixed_atoms
+    # Search lowest value of z
+    lowest_z_values = sorted(set([row[2] for row in sorted_coord]))[:fixed_atoms]
+
+    # Takes all the lines that have the lowest z values
+    lowest_z_rows = [row for row in sorted_coord if row[2] in lowest_z_values]
+
+    return lowest_z_rows
+
+lowest_z_lines = lowest_z_rows(cartesian_coord_bottom_slab,fixed_atoms)
+
+print(lowest_z_lines)
+
+
+
+AtomCoordsBottomSlab = []
+for coordinates in cartesian_coord_bottom_slab:
+    if fixed_atoms != 0:
+        if any(np.array_equal(coordinates, lowest) for lowest in lowest_z_lines):
+            coord_string = "{}  {}\n".format(
+                '\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
+                "F\tF\tF"
+            )
+        else:
+            coord_string = "{}  {}  {}  {}\n".format(
+                '\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
+                "T" if x_relax else "F",
+                "T" if y_relax else "F",
+                "T" if z_relax else "F"
+            )
+    else:
+        coord_string = "{}  {}  {}  {}\n".format(
+            '\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
+            "T" if x_relax else "F",
+            "T" if y_relax else "F",
+            "T" if z_relax else "F"
+)
+    AtomCoordsBottomSlab.append(coord_string)
+
+AtomCoordsUpperSlab = ["{}  {}  {}  {}\n".format('\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
+                        "T" if x_relax else "F",
+                        "T" if y_relax else "F",
+                        "T" if z_relax else "T"
+                         ) for coordinates in shifted_coords]
+
+HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab,HeaderUpperSlab),"1.0\n"]
+LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
+AtomTypes = ["{} {}\n".format(AtomTypeBottomSlab,AtomTypeUpperSlab)]
+AtomNumbers = ["{} {}\n".format(AtomNumberBottomSlab,AtomNumberUpperSlab)]
+
+OutputFile.writelines(HeaderAndScalingFactor)
+OutputFile.writelines(LatticeVectors)
+OutputFile.writelines(AtomTypes)
+OutputFile.writelines(AtomNumbers)
+OutputFile.writelines("Selective Dynamics\nCartesian\n")
+OutputFile.writelines(AtomCoordsBottomSlab)
+OutputFile.writelines(AtomCoordsUpperSlab)
+OutputFile.close()
