@@ -103,85 +103,21 @@ with open('bottom_slab.txt', 'r') as f:
 x_relax = True
 y_relax = True
 z_relax = True
-fixed_atoms = 0
 
-def lowest_z_rows(coord,fixed_atoms):
-    sorted_coord = sorted(coord, key=lambda x: x[2])
-    fixed_atoms = fixed_atoms
-    # Search lowest value of z
-    lowest_z_values = sorted(set([row[2] for row in sorted_coord]))[:fixed_atoms]
+def write_coords(coords, x_relax, y_relax, z_relax):
+   atom_coords = []
+   for coord in coords:
+       coord_string = "{}  {}  {}  {}\n".format(
+                   ' '.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
+                   "T" if x_relax else "F",
+                   "T" if y_relax else "F",
+                   "T" if z_relax else "F"
+       )
+       atom_coords.append(coord_string)
+   return atom_coords  
 
-    # Takes all the lines that have the lowest z values
-    lowest_z_rows = [row for row in sorted_coord if row[2] in lowest_z_values]
-
-    return lowest_z_rows
-
-lowest_z_lines = lowest_z_rows(cartesian_coord_bottom_slab,fixed_atoms)
-
-print(lowest_z_lines)
-
-
-'''
-AtomCoordsBottomSlab = []
-for coordinates in cartesian_coord_bottom_slab:
-    if fixed_atoms != 0:
-        if any(np.array_equal(coordinates, lowest) for lowest in lowest_z_lines):
-            coord_string = "{}  {}\n".format(
-                '\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
-                "F\tF\tF"
-            )
-        else:
-            coord_string = "{}  {}  {}  {}\n".format(
-                '\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
-                "T" if x_relax else "F",
-                "T" if y_relax else "F",
-                "T" if z_relax else "F"
-            )
-    else:
-        coord_string = "{}  {}  {}  {}\n".format(
-            '\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
-            "T" if x_relax else "F",
-            "T" if y_relax else "F",
-            "T" if z_relax else "F"
-)
-    AtomCoordsBottomSlab.append(coord_string)
-   
-
-AtomCoordsUpperSlab = ["{}  {}  {}  {}\n".format('\t'.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)]),
-                        "T" if x_relax else "F",
-                        "T" if y_relax else "F",
-                        "T" if z_relax else "T"
-                         ) for coordinates in shifted_coords]
- '''
-def write_coords(coords, fixed_atoms, x_relax, y_relax, z_relax, lowest_z_lines):
-    atom_coords = []
-    for coord in coords:
-        if fixed_atoms != 0:
-            if any(np.array_equal(coord, lowest) for lowest in lowest_z_lines):
-                coord_string = "{}\t{}\n".format(
-                    '\t'.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
-                    "F\tF\tF"
-                )
-            else:
-                coord_string = "{}\t{}\t{}\t{}\n".format(
-                    '\t'.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
-                    "T" if x_relax else "F",
-                    "T" if y_relax else "F",
-                    "T" if z_relax else "F"
-                )
-        else:
-            coord_string = "{}\t{}\t{}\t{}\n".format(
-                '\t'.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
-                "T" if x_relax else "F",
-                "T" if y_relax else "F",
-                "T" if z_relax else "F"
-            )
-        atom_coords.append(coord_string)
-    return atom_coords  
-
-
-AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, fixed_atoms, x_relax, y_relax, z_relax, lowest_z_lines)
-AtomCoordsUpperSlab = write_coords(shifted_coords, 0, x_relax, y_relax, z_relax, [])       
+AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
+AtomCoordsUpperSlab = write_coords(shifted_coords, x_relax, y_relax, z_relax)       
 
 HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab,HeaderUpperSlab),"1.0\n"]
 LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
