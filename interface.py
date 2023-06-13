@@ -18,72 +18,6 @@ atomic_coord_upper_slab =  functions.extract_atomic_coordinates('upper_slab.txt'
 cartesian_coord_bottom_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_bottom_slab)
 cartesian_coord_upper_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_upper_slab)
 
-def C_111_high_symmetry_points(file_path, selected_site):
-    original_file = file_path
-    temporary_file = "CONTCAR"
-
-    # Renaming the original file as the temporary file
-    os.rename(original_file, temporary_file)
-
-    # Crystalline structure from POSCAR
-    structure = Structure.from_file(temporary_file)
-
-    # Get information about structure symmetry
-    analyzer = SpacegroupAnalyzer(structure)
-    symmetrized_structure = analyzer.get_symmetrized_structure()
-
-    # Get high symmetry points of the structure
-    high_symmetry_sites = symmetrized_structure.equivalent_sites
-
-    # Select the reference site for the coordinates shift
-    selected_site = selected_site 
-
-    if selected_site == "top":
-        reference_site = high_symmetry_sites[0][1]
-    elif selected_site == "hollow_hcp":
-        reference_site = high_symmetry_sites[1][1]
-    elif selected_site == "hollow_fcc":
-        reference_site = high_symmetry_sites[3][1]
-    else:
-        print("Reference site not valid.")
-        return None
-    # Original file name restoration
-    os.rename(temporary_file, original_file)
-    return reference_site
-
-def metal_fcc_111_high_symmetry_points(file_path, selected_site):
-    original_file = file_path
-    temporary_file = "CONTCAR"
-
-    # Renaming the original file as the temporary file
-    os.rename(original_file, temporary_file)
-
-    # Crystalline structure from POSCAR
-    structure = Structure.from_file(temporary_file)
-
-    # Get information about structure symmetry
-    analyzer = SpacegroupAnalyzer(structure)
-    symmetrized_structure = analyzer.get_symmetrized_structure()
-
-    # Get high symmetry points of the structure
-    high_symmetry_sites = symmetrized_structure.equivalent_sites
-
-    # Select the reference site for the coordinates shift
-    selected_site = selected_site 
-
-    if selected_site == "top":
-        reference_site = high_symmetry_sites[0][1]
-    elif selected_site == "hollow_hcp":
-        reference_site = high_symmetry_sites[1][1]
-    elif selected_site == "hollow_fcc":
-        reference_site = high_symmetry_sites[2][1]
-    else:
-        print("Reference site not valid.")
-        return None
-    # Original file name restoration
-    print(reference_site)
-    os.rename(temporary_file, original_file)
-    return reference_site
 
 def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
     original_file = file_path
@@ -112,9 +46,9 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
 selected_site_Cu = "top"
 selected_site_C = "top"
 
-reference_site_Cu = metal_fcc_111_high_symmetry_points("upper_slab.txt",selected_site_Cu)
+reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("upper_slab.txt",selected_site_Cu)
 print(reference_site_Cu.coords[0])
-reference_site_C = C_111_high_symmetry_points("bottom_slab.txt", selected_site_C)
+reference_site_C = functions.C_111_high_symmetry_points("bottom_slab.txt", selected_site_C)
 shifted_upper_slab_on_xy = shift_slab_on_xy("upper_slab.txt", reference_site_Cu,reference_site_C)
 
 z = cartesian_coord_upper_slab[-1][2] if cartesian_coord_upper_slab else None
@@ -127,7 +61,7 @@ interlayer_distance_upper_slab =2.098396221
 slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab)/2
 
 shift_z = cartesian_coord_bottom_slab[-1][2]+slabs_distance-cartesian_coord_upper_slab[-1][2]
-shifted_coords =  functions.shift_coordinates(reflected_coords,shift_z)
+shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
 
 OutputFile = open("POSCAR","w")
