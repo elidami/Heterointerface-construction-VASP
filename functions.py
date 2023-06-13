@@ -137,3 +137,33 @@ def write_coords(coords, x_relax, y_relax, z_relax):
         )
         atom_coords.append(coord_string)
     return atom_coords  
+
+def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, cartesian_coord_upper_slab, a,b,c):
+    with open(input_file_upper, 'r') as f:
+        upper_slab_lines = f.readlines()
+        HeaderUpperSlab = upper_slab_lines[0].strip()
+        AtomTypeUpperSlab = upper_slab_lines[5].strip()
+        AtomNumberUpperSlab = upper_slab_lines[6].strip()
+
+    with open(input_file_bottom, 'r') as f:
+        bottom_slab_lines = f.readlines()
+        HeaderBottomSlab = bottom_slab_lines[0].strip()
+        AtomTypeBottomSlab = bottom_slab_lines[5].strip()
+        AtomNumberBottomSlab = bottom_slab_lines[6].strip()
+
+    AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
+    AtomCoordsUpperSlab = write_coords(cartesian_coord_upper_slab, x_relax, y_relax, z_relax)
+
+    HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab, HeaderUpperSlab), "1.0\n"]
+    LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
+    AtomTypes = ["{} {}\n".format(AtomTypeBottomSlab, AtomTypeUpperSlab)]
+    AtomNumbers = ["{} {}\n".format(AtomNumberBottomSlab, AtomNumberUpperSlab)]
+
+    with open('POSCAR', 'w') as f:
+        f.writelines(HeaderAndScalingFactor)
+        f.writelines(LatticeVectors)
+        f.writelines(AtomTypes)
+        f.writelines(AtomNumbers)
+        f.writelines("Selective Dynamics\nCartesian\n")
+        f.writelines(AtomCoordsBottomSlab)
+        f.writelines(AtomCoordsUpperSlab)
