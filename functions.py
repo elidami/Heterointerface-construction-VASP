@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+from pymatgen.core.structure import Structure
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+import os
 
 def extract_lattice_vectors(filename):
     # Read the text file into a pandas DataFrame, skipping the header row
@@ -49,9 +52,76 @@ def reflect_coord(coord_list, plane_point, plane_normal):
         reflected_coord.append(reflected_point)
     return reflected_coord
 
-def shift_coordinates(coord_list, shift_z):
+def shift_slab_along_z(coord_list, shift_z):
     shifted_coords = []
     for coord in coord_list:
         shifted_coord = np.array([coord[0], coord[1], coord[2] + shift_z])
         shifted_coords.append(shifted_coord)
     return shifted_coords
+
+def C_111_high_symmetry_points(file_path, selected_site):
+    original_file = file_path
+    temporary_file = "CONTCAR"
+
+    # Renaming the original file as the temporary file
+    os.rename(original_file, temporary_file)
+
+    # Crystalline structure from POSCAR
+    structure = Structure.from_file(temporary_file)
+
+    # Get information about structure symmetry
+    analyzer = SpacegroupAnalyzer(structure)
+    symmetrized_structure = analyzer.get_symmetrized_structure()
+
+    # Get high symmetry points of the structure
+    high_symmetry_sites = symmetrized_structure.equivalent_sites
+
+    # Select the reference site for the coordinates shift
+    selected_site = selected_site 
+
+    if selected_site == "top":
+        reference_site = high_symmetry_sites[0][1]
+    elif selected_site == "hollow_hcp":
+        reference_site = high_symmetry_sites[1][1]
+    elif selected_site == "hollow_fcc":
+        reference_site = high_symmetry_sites[3][1]
+    else:
+        print("Reference site not valid.")
+        return None
+    # Original file name restoration
+    os.rename(temporary_file, original_file)
+    return reference_site
+
+def metal_fcc_111_high_symmetry_points(file_path, selected_site):
+    original_file = file_path
+    temporary_file = "CONTCAR"
+
+    # Renaming the original file as the temporary file
+    os.rename(original_file, temporary_file)
+
+    # Crystalline structure from POSCAR
+    structure = Structure.from_file(temporary_file)
+
+    # Get information about structure symmetry
+    analyzer = SpacegroupAnalyzer(structure)
+    symmetrized_structure = analyzer.get_symmetrized_structure()
+
+    # Get high symmetry points of the structure
+    high_symmetry_sites = symmetrized_structure.equivalent_sites
+
+    # Select the reference site for the coordinates shift
+    selected_site = selected_site 
+
+    if selected_site == "top":
+        reference_site = high_symmetry_sites[0][1]
+    elif selected_site == "hollow_hcp":
+        reference_site = high_symmetry_sites[1][1]
+    elif selected_site == "hollow_fcc":
+        reference_site = high_symmetry_sites[2][1]
+    else:
+        print("Reference site not valid.")
+        return None
+    # Original file name restoration
+    print(reference_site)
+    os.rename(temporary_file, original_file)
+    return reference_site
