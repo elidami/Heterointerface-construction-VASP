@@ -81,6 +81,10 @@ adatom_slab_distance = cartesian_coord_adsorption[0][2]-highest_z_value_in_the_s
 shift_z = cartesian_coord_bottom_slab[0][2]+adatom_slab_distance-cartesian_coord_upper_slab[-1][2]
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
+x_relax = True
+y_relax = True
+z_relax = True
+'''
 OutputFile = open("POSCAR","w")
 with open('upper_slab.txt', 'r') as f:
     upper_slab_lines = f.readlines()
@@ -95,12 +99,6 @@ with open('bottom_slab_with_adatom.txt', 'r') as f:
     AtomTypeBottomSlab = bottom_slab_lines[5].strip()
     AtomNumberBottomSlab = bottom_slab_lines[6].strip()
 
-
-
-
-x_relax = True
-y_relax = True
-z_relax = True
 
 AtomCoordsBottomSlab = functions.write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
 AtomCoordsUpperSlab = functions.write_coords(shifted_coords, x_relax, y_relax, z_relax)       
@@ -117,8 +115,9 @@ OutputFile.writelines(AtomNumbers)
 OutputFile.writelines("Selective Dynamics\nCartesian\n")
 OutputFile.writelines(AtomCoordsBottomSlab)
 OutputFile.writelines(AtomCoordsUpperSlab)
-OutputFile.close()
+OutputFile.close() '''
 
+functions.write_POSCAR_interface('upper_slab.txt', 'bottom_slab_with_adatom.txt', cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, shifted_coords, a, b, c)
 
 
 

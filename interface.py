@@ -29,9 +29,6 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
     structure = Structure.from_file(temporary_file)
     shift_x = selected_site_C.coords[0]-selected_site_Cu.coords[0]
     shift_y = selected_site_C.coords[1]-selected_site_Cu.coords[1]
-    print(selected_site_C.coords[0])
-    print(selected_site_Cu.coords[0])
-    print(shift_x)
  # Shifting of the atomic coordinates in the POSCAR file
     for site in structure:
         site.coords[0] += shift_x
@@ -62,7 +59,10 @@ slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab
 shift_z = cartesian_coord_bottom_slab[-1][2]+slabs_distance-cartesian_coord_upper_slab[-1][2]
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
-
+x_relax = True
+y_relax = True
+z_relax = True
+'''
 OutputFile = open("POSCAR","w")
 with open('upper_slab.txt', 'r') as f:
     upper_slab_lines = f.readlines()
@@ -77,9 +77,6 @@ with open('bottom_slab.txt', 'r') as f:
     AtomTypeBottomSlab = bottom_slab_lines[5].strip()
     AtomNumberBottomSlab = bottom_slab_lines[6].strip()
 
-x_relax = True
-y_relax = True
-z_relax = True
  
 
 AtomCoordsBottomSlab = functions.write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
@@ -98,3 +95,7 @@ OutputFile.writelines("Selective Dynamics\nCartesian\n")
 OutputFile.writelines(AtomCoordsBottomSlab)
 OutputFile.writelines(AtomCoordsUpperSlab)
 OutputFile.close()
+'''
+
+functions.write_POSCAR_interface('upper_slab.txt', 'bottom_slab.txt', cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, shifted_coords, a, b, c)
+
