@@ -125,3 +125,15 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     print(reference_site)
     os.rename(temporary_file, original_file)
     return reference_site
+
+def write_coords(coords, x_relax, y_relax, z_relax):
+    atom_coords = []
+    for coord in coords:
+        coord_string = "{}  {}  {}  {}\n".format(
+                    ' '.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
+                    "T" if x_relax else "F",
+                    "T" if y_relax else "F",
+                    "T" if z_relax else "F"
+        )
+        atom_coords.append(coord_string)
+    return atom_coords  
