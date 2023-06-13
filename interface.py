@@ -18,41 +18,7 @@ atomic_coord_upper_slab =  functions.extract_atomic_coordinates('upper_slab.txt'
 cartesian_coord_bottom_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_bottom_slab)
 cartesian_coord_upper_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_upper_slab)
 
-z = cartesian_coord_upper_slab[-1][2] if cartesian_coord_upper_slab else None
-plane_point = np.array([0, 0,  z])
-plane_normal = np.array([0, 0, 1])
-reflected_coords =  functions.reflect_coord(cartesian_coord_upper_slab, plane_point, plane_normal)
-
-interlayer_distance_bottom_slab =1.545855346
-interlayer_distance_upper_slab =2.098396221
-slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab)/2
-
-shift_z = cartesian_coord_bottom_slab[-1][2]+slabs_distance-cartesian_coord_upper_slab[-1][2]
-shifted_coords =  functions.shift_coordinates(reflected_coords,shift_z)
-
-OutputFile = open("reflected_upper_slab.txt","w")
-with open('upper_slab.txt', 'r') as f:
-    upper_slab_lines = f.readlines()
-    HeaderUpperSlab = upper_slab_lines[0].strip()
-    AtomTypeUpperSlab = upper_slab_lines[5].strip()
-    AtomNumberUpperSlab = upper_slab_lines[6].strip()
-
-AtomCoordsUpperSlab = ["{}\n".format(' '.join(["{:<20.16f}".format(coord) for coord in coordinates.astype(float)])
-                        ) for coordinates in shifted_coords]
-HeaderAndScalingFactor = ["{}\n".format(HeaderUpperSlab),"1.0\n"]
-LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
-AtomTypes = ["{}\n".format(AtomTypeUpperSlab)]
-AtomNumbers = ["{}\n".format(AtomNumberUpperSlab)]
-
-OutputFile.writelines(HeaderAndScalingFactor)
-OutputFile.writelines(LatticeVectors)
-OutputFile.writelines(AtomTypes)
-OutputFile.writelines(AtomNumbers)
-OutputFile.writelines("Cartesian\n")
-OutputFile.writelines(AtomCoordsUpperSlab)
-OutputFile.close()
-
-def C_high_symmetry_points(file_path, selected_site):
+def C_111_high_symmetry_points(file_path, selected_site):
     original_file = file_path
     temporary_file = "CONTCAR"
 
@@ -85,9 +51,9 @@ def C_high_symmetry_points(file_path, selected_site):
     os.rename(temporary_file, original_file)
     return reference_site
 
-def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
+def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     original_file = file_path
-    temporary_file = "POSCAR"
+    temporary_file = "CONTCAR"
 
     # Renaming the original file as the temporary file
     os.rename(original_file, temporary_file)
@@ -103,41 +69,65 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
     high_symmetry_sites = symmetrized_structure.equivalent_sites
 
     # Select the reference site for the coordinates shift
-    selected_site_Cu = selected_site_Cu 
+    selected_site = selected_site 
 
-    if selected_site_Cu == "top":
+    if selected_site == "top":
         reference_site = high_symmetry_sites[0][1]
-    elif selected_site_Cu == "hollow_hcp":
+    elif selected_site == "hollow_hcp":
         reference_site = high_symmetry_sites[1][1]
-    elif selected_site_Cu == "hollow_fcc":
+    elif selected_site == "hollow_fcc":
         reference_site = high_symmetry_sites[2][1]
     else:
         print("Reference site not valid.")
         return None
+    # Original file name restoration
+    print(reference_site)
+    os.rename(temporary_file, original_file)
+    return reference_site
 
-    shift_x = selected_site_C.coords[0]-reference_site.coords[0]
-    shift_y = selected_site_C.coords[1]-reference_site.coords[1]
+def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
+    original_file = file_path
+    temporary_file = "CONTCAR"
 
+    # Renaming the original file as the temporary file
+    os.rename(original_file, temporary_file)
 
-    # Shifting of the atomic coordinates in the POSCAR file
+    # Crystalline structure from POSCAR
+    structure = Structure.from_file(temporary_file)
+    shift_x = selected_site_C.coords[0]-selected_site_Cu.coords[0]
+    shift_y = selected_site_C.coords[1]-selected_site_Cu.coords[1]
+    print(selected_site_C.coords[0])
+    print(selected_site_Cu.coords[0])
+    print(shift_x)
+ # Shifting of the atomic coordinates in the POSCAR file
     for site in structure:
         site.coords[0] += shift_x
         site.coords[1] += shift_y
-
-
-    # Original file name restoration
+ # Original file name restoration
     os.rename(temporary_file, original_file)
-    # Restituisci la lista di coordinate shiftate
+ # Restituisci la lista di coordinate shiftate
     shifted_coords = [site.coords for site in structure]
-
     return shifted_coords
-
 
 selected_site_Cu = "top"
 selected_site_C = "top"
 
-reference_site_C = C_high_symmetry_points("bottom_slab.txt", selected_site_C)
-shifted_upper_slab_on_xy = shift_slab_on_xy("reflected_upper_slab.txt", selected_site_Cu,reference_site_C)
+reference_site_Cu = metal_fcc_111_high_symmetry_points("upper_slab.txt",selected_site_Cu)
+print(reference_site_Cu.coords[0])
+reference_site_C = C_111_high_symmetry_points("bottom_slab.txt", selected_site_C)
+shifted_upper_slab_on_xy = shift_slab_on_xy("upper_slab.txt", reference_site_Cu,reference_site_C)
+
+z = cartesian_coord_upper_slab[-1][2] if cartesian_coord_upper_slab else None
+plane_point = np.array([0, 0,  z])
+plane_normal = np.array([0, 0, 1])
+reflected_coords =  functions.reflect_coord(shifted_upper_slab_on_xy, plane_point, plane_normal)
+
+interlayer_distance_bottom_slab =1.545855346
+interlayer_distance_upper_slab =2.098396221
+slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab)/2
+
+shift_z = cartesian_coord_bottom_slab[-1][2]+slabs_distance-cartesian_coord_upper_slab[-1][2]
+shifted_coords =  functions.shift_coordinates(reflected_coords,shift_z)
 
 
 OutputFile = open("POSCAR","w")
@@ -171,7 +161,7 @@ def write_coords(coords, x_relax, y_relax, z_relax):
    return atom_coords  
 
 AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
-AtomCoordsUpperSlab = write_coords(shifted_upper_slab_on_xy, x_relax, y_relax, z_relax)       
+AtomCoordsUpperSlab = write_coords(shifted_coords, x_relax, y_relax, z_relax)       
 
 HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab,HeaderUpperSlab),"1.0\n"]
 LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
