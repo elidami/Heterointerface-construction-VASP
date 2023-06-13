@@ -1,6 +1,5 @@
 import numpy as np
 from pymatgen.core.structure import Structure
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import os
 import functions
 
@@ -98,24 +97,13 @@ with open('bottom_slab_with_adatom.txt', 'r') as f:
 
 
 
-def write_coords(coords, x_relax, y_relax, z_relax):
-    atom_coords = []
-    for coord in coords:
-        coord_string = "{}  {}  {}  {}\n".format(
-                    ' '.join(["{:<20.16f}".format(c) for c in coord.astype(float)]),
-                    "T" if x_relax else "F",
-                    "T" if y_relax else "F",
-                    "T" if z_relax else "F"
-        )
-        atom_coords.append(coord_string)
-    return atom_coords  
 
 x_relax = True
 y_relax = True
 z_relax = True
 
-AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
-AtomCoordsUpperSlab = write_coords(shifted_coords, x_relax, y_relax, z_relax)       
+AtomCoordsBottomSlab = functions.write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
+AtomCoordsUpperSlab = functions.write_coords(shifted_coords, x_relax, y_relax, z_relax)       
 
 HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab,HeaderUpperSlab),"1.0\n"]
 LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
