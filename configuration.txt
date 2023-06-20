@@ -1,0 +1,6 @@
+[settings]
+selected_site_Cu = top
+selected_site_C = hollow_fcc
+x_relax = true
+y_relax = true
+z_relax = true
