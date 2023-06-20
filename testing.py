@@ -30,3 +30,33 @@ def test_extract_lattice_vectors():
 # Chiamare la funzione di test
 test_extract_lattice_vectors()
 
+def test_extract_atomic_coordinates():
+    # Creare un file di esempio con le coordinate atomiche
+    coordinates_file = 'atomic_coordinates.csv'
+    with open(coordinates_file, 'w') as f:
+        other_info = '#Other information\n'
+        f.writelines([other_info] * 9)
+        f.write('1.23 4.56 7.89\n')
+        f.write('2.34 5.67 8.90\n')
+        f.write('3.45 6.78 9.01\n')
+        f.write('0 0 0\n')
+        f.write('0 0 0\n')
+        f.write('0 0 0\n')
+
+    try:
+        # Eseguire la funzione da testare
+        result = functions.extract_atomic_coordinates(coordinates_file)
+
+        # Verificare se i risultati sono conformi alle aspettative
+        expected_result = np.array([[1.23, 4.56, 7.89],
+                                   [2.34, 5.67, 8.90],
+                                   [3.45, 6.78, 9.01]])
+        assert np.array_equal(result, expected_result), "I risultati ottenuti non corrispondono alle aspettative"
+    finally:
+        # Cancellare il file di test
+        os.remove(coordinates_file)
+
+# Chiamare la funzione di test
+test_extract_atomic_coordinates()
+
+
