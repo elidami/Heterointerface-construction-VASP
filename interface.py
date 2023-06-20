@@ -2,6 +2,12 @@ import numpy as np
 from pymatgen.core.structure import Structure
 import os
 import functions
+import sys
+import configparser
+
+config = configparser.ConfigParser()
+config.read(sys.argv[1])
+
 
 # Extract lattice vectors
 lattice_vectors = functions.extract_lattice_vectors('clean_interface_files/bottom_slab.txt')
@@ -39,11 +45,10 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
     shifted_coords = [site.coords for site in structure]
     return shifted_coords
 
-selected_site_Cu = "top"
-selected_site_C = "hollow_fcc"
+selected_site_Cu = config.get('settings', 'selected_site_Cu')
+selected_site_C = config.get('settings', 'selected_site_C')
 
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("clean_interface_files/upper_slab.txt",selected_site_Cu)
-print(reference_site_Cu.coords[0])
 reference_site_C = functions.C_111_high_symmetry_points("clean_interface_files/bottom_slab.txt", selected_site_C)
 shifted_upper_slab_on_xy = shift_slab_on_xy("clean_interface_files/upper_slab.txt", reference_site_Cu,reference_site_C)
 
@@ -59,9 +64,9 @@ slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab
 shift_z = cartesian_coord_bottom_slab[-1][2]+slabs_distance-cartesian_coord_upper_slab[-1][2]
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
-x_relax = True
-y_relax = True
-z_relax = True
+x_relax = config.get('settings', 'x_relax')
+y_relax = config.get('settings', 'y_relax')
+z_relax = config.get('settings', 'z_relax')
 
 functions.write_POSCAR_interface('clean_interface_files/upper_slab.txt', 'clean_interface_files/bottom_slab.txt', cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, shifted_coords, a, b, c)
 

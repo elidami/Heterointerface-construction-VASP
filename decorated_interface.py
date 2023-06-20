@@ -2,6 +2,12 @@ import numpy as np
 from pymatgen.core.structure import Structure
 import os
 import functions
+import sys
+import configparser
+
+config = configparser.ConfigParser()
+config.read(sys.argv[1])
+
 
 def distance_between_highest_z_values(coord):
     # Ordina le coordinate in base al valore di z in modo decrescente
@@ -67,7 +73,7 @@ def shift_for_adatom_adsorption_on_upper_slab(file_path, selected_site):
     return shifted_coords
 
 file_path = "decorated_interface_files/upper_slab.txt"
-selected_site_Cu = "hollow_fcc"
+selected_site_Cu = config.get('settings', 'selected_site_Cu')
 
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("decorated_interface_files/upper_slab.txt",selected_site_Cu)
 upper_slab_coords_for_adatom_adsorption = shift_for_adatom_adsorption_on_upper_slab(file_path, reference_site_Cu)
@@ -82,9 +88,9 @@ cartesian_coord_adsorption =  functions.direct_to_cartesian_coord(a_adsorption, 
 shift_z = cartesian_coord_bottom_slab[0][2]+distance_between_highest_z_values(cartesian_coord_adsorption)-cartesian_coord_upper_slab[-1][2]
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
-x_relax = True
-y_relax = True
-z_relax = True
+x_relax = config.get('settings', 'x_relax')
+y_relax = config.get('settings', 'y_relax')
+z_relax = config.get('settings', 'z_relax')
 
 
 functions.write_POSCAR_interface('decorated_interface_files/upper_slab.txt', 'decorated_interface_files/bottom_slab_with_adatom.txt', cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, shifted_coords, a, b, c)
