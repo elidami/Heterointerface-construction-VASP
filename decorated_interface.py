@@ -3,16 +3,18 @@ from pymatgen.core.structure import Structure
 import os
 import functions
 
+def distance_between_highest_z_values(coord):
+    # Ordina le coordinate in base al valore di z in modo decrescente
+    sorted_coord = sorted(coord, key=lambda x: x[2], reverse=True)
 
-def highest_z_value_in_the_slab_with_adsorbant(coord):
-    coord_excluded_first = coord[1:]
-    # Ordina le coordinate in base al valore di z in modo crescente
-    sorted_coord = sorted(coord_excluded_first, key=lambda x: x[2])
+    # Trova i due valori di z più alti
+    highest_z_values = sorted_coord[:2]
+    # Calcola la distanza tra i due valori di z più alti
+    distance = highest_z_values[0][2] - highest_z_values[1][2]
 
-    # Trova il valore di z più alto
-    highest_z_value = sorted_coord[-1][2]
+    return distance
 
-    return highest_z_value
+
 
 # Extract lattice vectors
 lattice_vectors =  functions.extract_lattice_vectors('bottom_slab_with_adatom.txt')
@@ -69,7 +71,7 @@ selected_site_Cu = "hollow_fcc"
 
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("upper_slab.txt",selected_site_Cu)
 upper_slab_coords_for_adatom_adsorption = shift_for_adatom_adsorption_on_upper_slab(file_path, reference_site_Cu)
-print(upper_slab_coords_for_adatom_adsorption)
+
 
 z = upper_slab_coords_for_adatom_adsorption[-1][2] if upper_slab_coords_for_adatom_adsorption else None
 plane_point = np.array([0, 0,  z])
@@ -77,8 +79,7 @@ plane_normal = np.array([0, 0, 1])
 reflected_coords =  functions.reflect_coord(upper_slab_coords_for_adatom_adsorption, plane_point, plane_normal)
 # Convert direct coordinates to Cartesian coordinates
 cartesian_coord_adsorption =  functions.direct_to_cartesian_coord(a_adsorption, b_adosrption, c_adsorption, atomic_coord_adsorption)
-adatom_slab_distance = cartesian_coord_adsorption[0][2]-highest_z_value_in_the_slab_with_adsorbant(cartesian_coord_adsorption)
-shift_z = cartesian_coord_bottom_slab[0][2]+adatom_slab_distance-cartesian_coord_upper_slab[-1][2]
+shift_z = cartesian_coord_bottom_slab[0][2]+distance_between_highest_z_values(cartesian_coord_adsorption)-cartesian_coord_upper_slab[-1][2]
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
 x_relax = True
