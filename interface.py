@@ -33,8 +33,8 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
 
     # Crystalline structure from POSCAR
     structure = Structure.from_file(temporary_file)
-    shift_x = selected_site_C.coords[0]-selected_site_Cu.coords[0]
-    shift_y = selected_site_C.coords[1]-selected_site_Cu.coords[1]
+    shift_x = selected_site_C[0]-selected_site_Cu[0]
+    shift_y = selected_site_C[1]-selected_site_Cu[1]
  # Shifting of the atomic coordinates in the POSCAR file
     for site in structure:
         site.coords[0] += shift_x
@@ -50,6 +50,7 @@ selected_site_C = config.get('settings', 'selected_site_C')
 
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("clean_interface_files/upper_slab.txt",selected_site_Cu)
 reference_site_C = functions.C_111_high_symmetry_points("clean_interface_files/bottom_slab.txt", selected_site_C)
+print(reference_site_C)
 shifted_upper_slab_on_xy = shift_slab_on_xy("clean_interface_files/upper_slab.txt", reference_site_Cu,reference_site_C)
 
 z = cartesian_coord_upper_slab[-1][2] if cartesian_coord_upper_slab else None

@@ -56,8 +56,8 @@ def shift_for_adatom_adsorption_on_upper_slab(file_path, selected_site):
     # Crystalline structure from POSCAR
     structure = Structure.from_file(temporary_file)
 
-    shift_x = cartesian_coord_bottom_slab[0][0]-selected_site.coords[0]
-    shift_y = cartesian_coord_bottom_slab[0][1]-selected_site.coords[1]
+    shift_x = cartesian_coord_bottom_slab[0][0]-selected_site[0]
+    shift_y = cartesian_coord_bottom_slab[0][1]-selected_site[1]
 
     # Shifting of the atomic coordinates in the POSCAR file
     for site in structure:
@@ -76,6 +76,7 @@ file_path = "decorated_interface_files/upper_slab.txt"
 selected_site_Cu = config.get('settings', 'selected_site_Cu')
 
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("decorated_interface_files/upper_slab.txt",selected_site_Cu)
+print(reference_site_Cu)
 upper_slab_coords_for_adatom_adsorption = shift_for_adatom_adsorption_on_upper_slab(file_path, reference_site_Cu)
 
 
