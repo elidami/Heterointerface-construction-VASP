@@ -1,8 +1,7 @@
 import functions
 import numpy as np
 import os
-from pymatgen.core.structure import Structure, Lattice
-from pymatgen.core.surface import SlabGenerator
+from pymatgen.core.periodic_table import Element
 
 
 def test_extract_lattice_vectors():
@@ -137,16 +136,56 @@ def test_shift_slab_along_z():
 test_shift_slab_along_z()
 
 def test_C_111_high_symmetry_points():
-    # Creazione della superficie 111 del diamante
-    lattice_constant = 3.57  # Costante di reticolo del diamante
-    lattice = Lattice.cubic(lattice_constant)
-    structure = Structure.from_spacegroup(227, lattice, ["C"], [[0, 0, 0]])
-    print(structure)
-    #miller_index = (1, 1, 1)
-    #min_slab_size = 10
-    #min_vacuum_size = 15
-    #slabgen = SlabGenerator(structure, miller_index, min_slab_size, min_vacuum_size)
-    #slab = slabgen.get_slab()
+   # Creare un file di esempio con le coordinate atomiche
+   C_slab_file = 'C_bulk.txt'
+   with open(C_slab_file, 'w') as f:
+       f.writelines('C\n'                                      
+                    '1.00000000000000\n'     
+                    ' 2.5243712088359747    0.0000000000000000    0.0000000000000000\n'
+                    ' 1.2621856044179873    2.1861695954339861    0.0000000000000000\n'
+                    '  0.0000000000000000    0.0000000000000000   16.6987064980000000\n'
+                    'C\n'
+                     ' 8\n'
+                    'Selective dynamics\n'
+                    'Direct\n'
+                    '  0.3333333332770749  0.3333333331146875  0.0034289678025159\n'
+                    '  0.6666666666566030  0.6666666666867940  0.0240215642292031\n'
+                    '  0.6666666666566030  0.6666666666867940  0.1241682240429344\n'
+                    ' -0.0000000000000000  0.0000000000000000  0.1531807799907116\n'
+                    '  0.0000000000000000 -0.0000000000000000  0.2479704408420117\n'
+                    '  0.3333333332770749  0.3333333331146875  0.2769829967897892\n'
+                    '  0.3333333332770749  0.3333333331146875  0.3771296566035199\n'
+                    '  0.6666666666566030  0.6666666666867940  0.3977222530302071\n')
+   hollow_fcc = functions.C_111_high_symmetry_points(C_slab_file, "hollow_fcc")
+   hollow_hcp = functions.C_111_high_symmetry_points(C_slab_file, "hollow_hcp")
+   top = functions.C_111_high_symmetry_points(C_slab_file, "top")
+   
+   expected_hollow_fcc = [0.  ,       0.   ,      4.14078561] 
+   expected_hollow_hcp = [1.2621856,  0.7287232,  6.29757745]
+   expected_top = [2.52437121, 1.4574464,  6.64144717]
+ 
+
+   # Estrai le coordinate x, y e z dall'array
+   hollow_fcc_x, hollow_fcc_y, hollow_fcc_z = round(hollow_fcc[0], 8), round(hollow_fcc[1], 8), round(hollow_fcc[2], 8)   
+   hollow_hcp_x, hollow_hcp_y, hollow_hcp_z = round(hollow_hcp[0], 8), round(hollow_hcp[1], 8), round(hollow_hcp[2], 8) 
+   top_x, top_y, top_z = round(top[0], 8), round(top[1], 8), round(top[2], 8)    
+   
+   
+   # Confronta le coordinate con i valori attesi
+   assert hollow_fcc_x == expected_hollow_fcc[0], "La coordinata x ottenuta non corrisponde alle aspettative"
+   assert hollow_fcc_y == expected_hollow_fcc[1], "La coordinata y ottenuta non corrisponde alle aspettative"
+   assert hollow_fcc_z == expected_hollow_fcc[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+
+   assert hollow_hcp_x == expected_hollow_hcp[0], "La coordinata x ottenuta non corrisponde alle aspettative"
+   assert hollow_hcp_y == expected_hollow_hcp[1], "La coordinata y ottenuta non corrisponde alle aspettative"
+   assert hollow_hcp_z == expected_hollow_hcp[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+
+   assert top_x == expected_top[0], "La coordinata x ottenuta non corrisponde alle aspettative"
+   assert top_y == expected_top[1], "La coordinata y ottenuta non corrisponde alle aspettative"
+   assert top_z == expected_top[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   
+   os.remove(C_slab_file)
+
 
 test_C_111_high_symmetry_points()
 
