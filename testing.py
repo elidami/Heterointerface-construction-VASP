@@ -245,6 +245,31 @@ def test_metal_fcc_111_high_symmetry_points():
 
 test_metal_fcc_111_high_symmetry_points()
 
+def test_write_coords():
+    # Define sample input data as a list of NumPy arrays
+    coords = [
+        np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
+        np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
+        np.array([5.0071359999999903,   1.4458782853606842  , 0.4115548962189028])
+    ]
+    x_relax = True
+    y_relax = False
+    z_relax = True
+
+    # Call the function to get the result
+    result = functions.write_coords(coords, x_relax, y_relax, z_relax)
+
+    # Define the expected output
+    expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  F  T\n', 
+                       '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  F  T\n', 
+                       '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  F  T\n']
+
+    # Assert that the result matches the expected output
+    assert result == expected_output, "Test failed: Output doesn't match the expected result"
+
+
+test_write_coords()
+
 
 
 
