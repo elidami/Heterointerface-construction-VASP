@@ -137,7 +137,7 @@ test_shift_slab_along_z()
 
 def test_C_111_high_symmetry_points():
    # Creare un file di esempio con le coordinate atomiche
-   C_slab_file = 'C_bulk.txt'
+   C_slab_file = 'C_slab.txt'
    with open(C_slab_file, 'w') as f:
        f.writelines('C\n'                                      
                     '1.00000000000000\n'     
@@ -188,6 +188,62 @@ def test_C_111_high_symmetry_points():
 
 
 test_C_111_high_symmetry_points()
+
+def test_metal_fcc_111_high_symmetry_points():
+   # Creare un file di esempio con le coordinate atomiche
+   metal_slab_file = 'metal_fcc_slab.txt'
+   with open(metal_slab_file, 'w') as f:
+       f.writelines('Cu 111\n'                                  
+                   '1.00000000000000\n'      
+                     '2.5699999332000001    0.0000000000000000    0.0000000000000000\n'  
+                     '1.2849999666000000    2.2256852298999998    0.0000000000000000\n'  
+                     '0.0000000000000000    0.0000000000000000   24.6887716150000003\n'  
+                   'Cu\n'  
+                     '8\n'  
+                'Selective dynamics\n'  
+                'Direct\n'  
+                '-0.0000000000000000 -0.0000000000000000  0.0007633363954040\n'
+                ' 0.3333333432502954  0.3333333433826695  0.0846976036770734\n'
+                ' 0.6666666271921713  0.6666666863160486  0.1696670099955020\n'
+                ' 0.0000000000000000  0.0000000000000000  0.2548589898860777\n'
+                ' 0.3333333432502954  0.3333333433826695  0.3400986447852040\n'
+                ' 0.6666666271921713  0.6666666863160486  0.4252906246757862\n'
+                ' 0.0000000000000000  0.0000000000000000  0.5102600153595757\n'
+                ' 0.3333333432502954  0.3333333433826695  0.5941942355753135\n')
+                    
+                    
+   hollow_fcc = functions.metal_fcc_111_high_symmetry_points(metal_slab_file, "hollow_fcc")
+   hollow_hcp = functions.metal_fcc_111_high_symmetry_points(metal_slab_file, "hollow_hcp")
+   top = functions.metal_fcc_111_high_symmetry_points(metal_slab_file, "top")
+   
+   expected_hollow_fcc = [ 2.56999986 , 1.4837902 , 10.4999031 ]
+   expected_hollow_hcp = [ 0.,          0.,         12.59769298]
+   expected_top = [ 1.285 ,      0.7418951,  14.66992578]
+ 
+
+   # Estrai le coordinate x, y e z dall'array
+   hollow_fcc_x, hollow_fcc_y, hollow_fcc_z = round(hollow_fcc[0], 8), round(hollow_fcc[1], 8), round(hollow_fcc[2], 8)   
+   hollow_hcp_x, hollow_hcp_y, hollow_hcp_z = round(hollow_hcp[0], 8), round(hollow_hcp[1], 8), round(hollow_hcp[2], 8) 
+   top_x, top_y, top_z = round(top[0], 8), round(top[1], 8), round(top[2], 8)    
+   
+   
+   # Confronta le coordinate con i valori attesi
+   assert hollow_fcc_x == expected_hollow_fcc[0], "La coordinata x ottenuta non corrisponde alle aspettative"
+   assert hollow_fcc_y == expected_hollow_fcc[1], "La coordinata y ottenuta non corrisponde alle aspettative"
+   assert hollow_fcc_z == expected_hollow_fcc[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+
+   assert hollow_hcp_x == expected_hollow_hcp[0], "La coordinata x ottenuta non corrisponde alle aspettative"
+   assert hollow_hcp_y == expected_hollow_hcp[1], "La coordinata y ottenuta non corrisponde alle aspettative"
+   assert hollow_hcp_z == expected_hollow_hcp[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+
+   assert top_x == expected_top[0], "La coordinata x ottenuta non corrisponde alle aspettative"
+   assert top_y == expected_top[1], "La coordinata y ottenuta non corrisponde alle aspettative"
+   assert top_z == expected_top[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+
+   os.remove(metal_slab_file)
+
+
+test_metal_fcc_111_high_symmetry_points()
 
 
 
