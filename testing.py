@@ -1,8 +1,8 @@
 import functions
 import numpy as np
 import os
-from pymatgen.core.periodic_table import Element
-
+#from decorated_interface import distance_between_highest_z_values
+#from decorated_interface import shift_for_adatom_adsorption_on_upper_slab
 
 def test_extract_lattice_vectors():
     # Creare un file di esempio con i vettori del reticolo
@@ -270,7 +270,49 @@ def test_write_coords():
 
 test_write_coords()
 
+def test_shift_slab_on_xy():
+    # Create a temporary file with initial coordinates
+    original_file = "POSCAR_temp"
+    with open(original_file, "w") as f:
+        f.writelines('Cu 111\n'
+                     '1.0\n'
+                            '2.5699999332         0.0000000000         0.0000000000\n'
+                            '1.2849999666         2.2256852299         0.0000000000\n'
+                            '0.0000000000         0.0000000000        20.491980720\n'
+                     'Cu\n'
+                     '6\n'
+                     'Selective Dynamics\n'
+                     'Cartesian\n'
+                        '0.000000000         0.000000000         0.000000000\n' 
+                        '1.285000005         0.741895099         2.098396222\n' 
+                        '2.569999857         1.483790197         4.196792443\n' 
+                        '0.000000000         0.000000000         6.295188277\n' 
+                        '1.285000005         0.741895099         8.393584886\n' 
+                        '2.569999857         1.483790197        10.491980720\n' )
 
+    # Define the selected sites Cu and C
+    selected_site_Cu = [0.0, 0.0, 0.0]
+    selected_site_C = [0.5, 0.5, 0.0]
+
+    # Call the function to get the result
+    result = functions.shift_slab_on_xy(original_file, selected_site_Cu, selected_site_C)
+
+    # Define the expected output (shifted coordinates)
+    expected_output = [np.array([0.5 ,       0.5 ,  0. ]),
+                       np.array([1.785 ,     1.2418951 , 2.098396222]),
+                       np.array([3.06999986 ,1.9837902 ,  4.19679244]),
+                       np.array([0.5     ,   0.5  ,  6.29518828]),
+                       np.array([1.785     , 1.2418951 , 8.39358489]),
+                       np.array([3.06999986,  1.9837902 , 10.49198072])
+                       ]
+
+    for i in range(len(result)):
+        assert np.allclose(result[i], expected_output[i]), f"I risultati ottenuti per il punto {i+1} non corrispondono alle aspettative"
+
+    # Remove the temporary file after the test
+    os.remove(original_file)
+
+test_shift_slab_on_xy()
 
 
 
