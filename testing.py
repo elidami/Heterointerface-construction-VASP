@@ -245,31 +245,6 @@ def test_metal_fcc_111_high_symmetry_points():
 
 test_metal_fcc_111_high_symmetry_points()
 
-def test_write_coords():
-    # Define sample input data as a list of NumPy arrays
-    coords = [
-        np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
-        np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
-        np.array([5.0071359999999903,   1.4458782853606842  , 0.4115548962189028])
-    ]
-    x_relax = True
-    y_relax = False
-    z_relax = True
-
-    # Call the function to get the result
-    result = functions.write_coords(coords, x_relax, y_relax, z_relax)
-
-    # Define the expected output
-    expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  F  T\n', 
-                       '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  F  T\n', 
-                       '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  F  T\n']
-
-    # Assert that the result matches the expected output
-    assert result == expected_output, "Test failed: Output doesn't match the expected result"
-
-
-test_write_coords()
-
 def test_shift_slab_on_xy():
     # Create a temporary file with initial coordinates
     original_file = "POSCAR_temp"
@@ -313,6 +288,53 @@ def test_shift_slab_on_xy():
     os.remove(original_file)
 
 test_shift_slab_on_xy()
+
+def test_distance_between_highest_z_values():
+    # Esempio di coordinate
+    coords = [
+        [1.0, 2.0, 5.0],
+        [3.0, 4.0, 8.0],
+        [5.0, 6.0, 2.0],
+        [7.0, 8.0, 7.0],
+    ]
+
+    # Calcola il valore atteso della distanza tra i valori di z più alti
+    sorted_coords = sorted(coords, key=lambda x: x[2], reverse=True)
+    expected_distance = sorted_coords[0][2] - sorted_coords[1][2]
+
+    # Chiama la funzione per ottenere il risultato
+    result = functions.distance_between_highest_z_values(coords)
+
+    # Confronta il risultato con il valore atteso
+    assert result == expected_distance, "Test failed: Output doesn't match the expected result"
+
+test_distance_between_highest_z_values()
+
+def test_write_coords():
+    # Define sample input data as a list of NumPy arrays
+    coords = [
+        np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
+        np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
+        np.array([5.0071359999999903,   1.4458782853606842  , 0.4115548962189028])
+    ]
+    x_relax = True
+    y_relax = False
+    z_relax = True
+
+    # Call the function to get the result
+    result = functions.write_coords(coords, x_relax, y_relax, z_relax)
+
+    # Define the expected output
+    expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  F  T\n', 
+                       '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  F  T\n', 
+                       '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  F  T\n']
+
+    # Assert that the result matches the expected output
+    assert result == expected_output, "Test failed: Output doesn't match the expected result"
+
+
+test_write_coords()
+
 
 
 
