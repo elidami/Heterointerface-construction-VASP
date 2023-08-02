@@ -23,7 +23,7 @@ atomic_coord_upper_slab =  functions.extract_atomic_coordinates('clean_interface
 cartesian_coord_bottom_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_bottom_slab)
 cartesian_coord_upper_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_upper_slab)
 
-
+'''
 def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
     original_file = file_path
     temporary_file = "CONTCAR"
@@ -44,14 +44,14 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
  # Restituisci la lista di coordinate shiftate
     shifted_coords = [site.coords for site in structure]
     return shifted_coords
-
+'''
 selected_site_Cu = config.get('settings', 'selected_site_Cu')
 selected_site_C = config.get('settings', 'selected_site_C')
 
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("clean_interface_files/upper_slab.txt",selected_site_Cu)
 reference_site_C = functions.C_111_high_symmetry_points("clean_interface_files/bottom_slab.txt", selected_site_C)
 print(reference_site_C)
-shifted_upper_slab_on_xy = shift_slab_on_xy("clean_interface_files/upper_slab.txt", reference_site_Cu,reference_site_C)
+shifted_upper_slab_on_xy = functions.shift_slab_on_xy("clean_interface_files/upper_slab.txt", reference_site_Cu,reference_site_C)
 
 z = cartesian_coord_upper_slab[-1][2] if cartesian_coord_upper_slab else None
 plane_point = np.array([0, 0,  z])

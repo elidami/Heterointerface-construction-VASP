@@ -127,6 +127,27 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     os.rename(temporary_file, original_file)
     return reference_site
 
+def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
+    original_file = file_path
+    temporary_file = "CONTCAR"
+
+    # Renaming the original file as the temporary file
+    os.rename(original_file, temporary_file)
+
+    # Crystalline structure from POSCAR
+    structure = Structure.from_file(temporary_file)
+    shift_x = selected_site_C[0]-selected_site_Cu[0]
+    shift_y = selected_site_C[1]-selected_site_Cu[1]
+ # Shifting of the atomic coordinates in the POSCAR file
+    for site in structure:
+        site.coords[0] += shift_x
+        site.coords[1] += shift_y
+ # Original file name restoration
+    os.rename(temporary_file, original_file)
+ # Restituisci la lista di coordinate shiftate
+    shifted_coords = [site.coords for site in structure]
+    return shifted_coords
+
 def write_coords(coords, x_relax, y_relax, z_relax):
     atom_coords = []
     for coord in coords:
@@ -136,7 +157,7 @@ def write_coords(coords, x_relax, y_relax, z_relax):
                     "T" if y_relax else "F",
                     "T" if z_relax else "F"
         )
-        atom_coords.append(coord_string)
+        atom_coords.append(coord_string)   
     return atom_coords  
 
 def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, cartesian_coord_upper_slab, a,b,c):
