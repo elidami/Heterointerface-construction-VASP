@@ -148,6 +148,17 @@ def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
     shifted_coords = [site.coords for site in structure]
     return shifted_coords
 
+def distance_between_highest_z_values(coord):
+    # Ordina le coordinate in base al valore di z in modo decrescente
+    sorted_coord = sorted(coord, key=lambda x: x[2], reverse=True)
+
+    # Trova i due valori di z più alti
+    highest_z_values = sorted_coord[:2]
+    # Calcola la distanza tra i due valori di z più alti
+    distance = highest_z_values[0][2] - highest_z_values[1][2]
+
+    return distance
+
 def write_coords(coords, x_relax, y_relax, z_relax):
     atom_coords = []
     for coord in coords:
