@@ -1,6 +1,4 @@
 import numpy as np
-from pymatgen.core.structure import Structure
-import os
 import functions
 import sys
 import configparser
