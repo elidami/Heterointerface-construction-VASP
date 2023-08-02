@@ -23,28 +23,6 @@ atomic_coord_upper_slab =  functions.extract_atomic_coordinates('clean_interface
 cartesian_coord_bottom_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_bottom_slab)
 cartesian_coord_upper_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_upper_slab)
 
-'''
-def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
-    original_file = file_path
-    temporary_file = "CONTCAR"
-
-    # Renaming the original file as the temporary file
-    os.rename(original_file, temporary_file)
-
-    # Crystalline structure from POSCAR
-    structure = Structure.from_file(temporary_file)
-    shift_x = selected_site_C[0]-selected_site_Cu[0]
-    shift_y = selected_site_C[1]-selected_site_Cu[1]
- # Shifting of the atomic coordinates in the POSCAR file
-    for site in structure:
-        site.coords[0] += shift_x
-        site.coords[1] += shift_y
- # Original file name restoration
-    os.rename(temporary_file, original_file)
- # Restituisci la lista di coordinate shiftate
-    shifted_coords = [site.coords for site in structure]
-    return shifted_coords
-'''
 selected_site_Cu = config.get('settings', 'selected_site_Cu')
 selected_site_C = config.get('settings', 'selected_site_C')
 
