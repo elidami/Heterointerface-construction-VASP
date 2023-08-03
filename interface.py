@@ -20,11 +20,11 @@ atomic_coord_upper_slab =  functions.extract_atomic_coordinates('clean_interface
 cartesian_coord_bottom_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_bottom_slab)
 cartesian_coord_upper_slab =  functions.direct_to_cartesian_coord(a, b, c, atomic_coord_upper_slab)
 
+# Shift upper slab on xy plane so that the selected high symmetry points of upper and bottom slabs are aligned
 selected_site_Cu = config.get('settings', 'selected_site_Cu')
 selected_site_C = config.get('settings', 'selected_site_C')
 reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("clean_interface_files/upper_slab.txt",selected_site_Cu)
 reference_site_C = functions.C_111_high_symmetry_points("clean_interface_files/bottom_slab.txt", selected_site_C)
-# Shift upper slab on xy plane so that the selected high symmetry points of upper and bottom slabs are aligned
 shifted_upper_slab_on_xy = functions.shift_slab_on_xy("clean_interface_files/upper_slab.txt", reference_site_Cu,reference_site_C)
 
 # Reflect atomic coordinates of the upper slab with respect to its highest atom along z direction
