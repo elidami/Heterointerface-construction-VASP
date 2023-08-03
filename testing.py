@@ -1,11 +1,16 @@
 import functions
 import numpy as np
 import os
-#from decorated_interface import distance_between_highest_z_values
-#from decorated_interface import shift_for_adatom_adsorption_on_upper_slab
 
 def test_extract_lattice_vectors():
-    # Creare un file di esempio con i vettori del reticolo
+    '''This test ensures that the "extract_lattice_vectors" function correctly reads the lattice 
+       vectors from the input file and returns them in the expected format, represented as a dictionary 
+       with keys 'a', 'b', and 'c' mapping to their respective numpy array values.
+       
+       Test Steps:
+        -Create a temporary example file named "lattice_vectors.csv" with lattice vectors.
+        -Execute the "extract_lattice_vectors" function, passing the file path of the created file as input.
+        -Verify if the returned results match the expected lattice vectors.'''
     lattice_file = 'lattice_vectors.csv'
     with open(lattice_file, 'w') as f:
         f.write('# Comments or header information\n')
@@ -14,26 +19,26 @@ def test_extract_lattice_vectors():
         f.write('0.00 3.45 0.00\n')
         f.write('0.00 0.00 5.00\n')
 
-    # Eseguire la funzione da testare
     result = functions.extract_lattice_vectors(lattice_file)
 
-    # Verificare se i risultati sono conformi alle aspettative
     expected_result = {
         'a': np.array([3.45, 0.00, 0.00]),
         'b': np.array([0.00, 3.45, 0.00]),
         'c': np.array([0.00, 0.00, 5.00])
     }
-    assert np.array_equal(result['a'], expected_result['a']), "I risultati ottenuti per 'a' non corrispondono alle aspettative"
-    assert np.array_equal(result['b'], expected_result['b']), "I risultati ottenuti per 'b' non corrispondono alle aspettative"
-    assert np.array_equal(result['c'], expected_result['c']), "I risultati ottenuti per 'c' non corrispondono alle aspettative"
+    assert np.array_equal(result['a'], expected_result['a']), "The obtained results for 'a' do not match the expectations."
+    assert np.array_equal(result['b'], expected_result['b']), "The obtained results for 'b' do not match the expectations."
+    assert np.array_equal(result['c'], expected_result['c']), "The obtained results for 'c' do not match the expectations."
  
     os.remove(lattice_file)
 
-# Chiamare la funzione di test
-test_extract_lattice_vectors()
-
 def test_extract_atomic_coordinates():
-    # Creare un file di esempio con le coordinate atomiche
+    '''This function is a unit test for the "extract_atomic_coordinates" function.
+
+       Test Steps:
+            -Create a temporary example file named "atomic_coordinates.csv" with atomic coordinates.
+            -Execute the "extract_atomic_coordinates" function, passing the file path of the created file as input.
+            -Verify if the returned results match the expected atomic coordinates.'''
     coordinates_file = 'atomic_coordinates.csv'
     with open(coordinates_file, 'w') as f:
         other_info = '#Other information\n'
@@ -44,47 +49,47 @@ def test_extract_atomic_coordinates():
         f.write('0 0 0\n')
         f.write('0 0 0\n')
         f.write('0 0 0\n')
-    # Eseguire la funzione da testare
+   
     result = functions.extract_atomic_coordinates(coordinates_file)
 
-    # Verificare se i risultati sono conformi alle aspettative
     expected_result = np.array([[1.23, 4.56, 7.89],
                                [2.34, 5.67, 8.90],
                                [3.45, 6.78, 9.01]])
-    assert np.array_equal(result, expected_result), "I risultati ottenuti non corrispondono alle aspettative"
+    assert np.array_equal(result, expected_result), "The obtained results do not match the expectations."
     
-    # Cancellare il file di test
     os.remove(coordinates_file)
 
-# Chiamare la funzione di test
-test_extract_atomic_coordinates()
-
 def test_direct_to_cartesian_coord():
-    # Definire i vettori del reticolo
+    '''This function is a unit test for the "direct_to_cartesian_coord" function.
+
+        Test Steps:
+            -Define the lattice vectors 'a', 'b', and 'c' representing the lattice of the structure.
+            -Define the direct coordinates 'direct_coord' as a numpy array containing two sets of direct coordinates.
+            -Execute the "direct_to_cartesian_coord" function, passing the lattice vectors and direct coordinates as input.
+            -Verify if the returned results match the expected Cartesian coordinates.'''
     a = np.array([1.00, 0.00, 0.00])
     b = np.array([0.00, 2.00, 0.00])
     c = np.array([0.00, 0.00, 3.00])
 
-    # Definire le coordinate dirette
     direct_coord = np.array([[0.25, 0.50, 0.75], [0.10, 0.20, 0.30]])
 
-    # Eseguire la funzione da testare
     result = functions.direct_to_cartesian_coord(a, b, c, direct_coord)
 
-    # Verificare se i risultati sono conformi alle aspettative
     expected_result = [
         np.array([0.25, 1, 2.25]),
         np.array([0.10, 0.40, 0.90])
     ]
     for i in range(len(result)):
-        assert np.allclose(result[i], expected_result[i]), f"I risultati ottenuti per la coordinata {i+1} non corrispondono alle aspettative"
-
-
-# Chiamare la funzione di test
-test_direct_to_cartesian_coord()
+        assert np.allclose(result[i], expected_result[i]), f"The obtained results for coordinate {i+1} do not match the expectations."
 
 def test_reflect_coord():
-    # Definire i dati di input per il test
+    '''This function is a unit test for the "reflect_coord" function.
+
+        Test Steps:
+            -Define a list of coordinate points 'coord_list', representing atomic positions.
+            -Define a plane point 'plane_point' and a plane normal 'plane_normal', which represent the plane used for reflection.
+            -Execute the "reflect_coord" function, passing the coordinate list, plane point, and plane normal as input.
+            -Verify if the returned results match the expected reflected coordinates.'''
     coord_list = [
         np.array([1.0, 2.0, 3.0]),
         np.array([4.0, 5.0, 6.0]),
@@ -93,25 +98,25 @@ def test_reflect_coord():
     plane_point = np.array([0.0, 0.0, 0.0])
     plane_normal = np.array([1.0, 0.0, 0.0])
 
-    # Eseguire la funzione da testare
     result = functions.reflect_coord(coord_list, plane_point, plane_normal)
 
-    # Definire i risultati attesi
     expected_result = [
         np.array([-1.0, 2.0, 3.0]),
         np.array([-4.0, 5.0, 6.0]),
         np.array([-7.0, 8.0, 9.0])
     ]
 
-    # Verificare se i risultati sono conformi alle aspettative
     for i in range(len(result)):
-        assert np.array_equal(result[i], expected_result[i]), f"I risultati ottenuti per il punto {i+1} non corrispondono alle aspettative"
-
-# Chiamare la funzione di test
-test_reflect_coord()
+        assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
 
 def test_shift_slab_along_z():
-    # Definire i dati di input per il test
+    '''This function is a unit test for the "shift_slab_along_z" function.
+
+        Test Steps:
+            -Define a list of coordinate points 'coord_list', representing atomic positions.
+            -Define a value 'shift_z', representing the amount of displacement in the z-direction.
+            -Execute the "shift_slab_along_z" function, passing the coordinate list and shift value as input.
+            -Verify if the returned results match the expected coordinates after the z-direction shift.'''
     coord_list = [
         np.array([1.0, 2.0, 3.0]),
         np.array([4.0, 5.0, 6.0]),
@@ -119,10 +124,8 @@ def test_shift_slab_along_z():
     ]
     shift_z = 2.0
 
-    # Eseguire la funzione da testare
     result = functions.shift_slab_along_z(coord_list, shift_z)
 
-    # Definire i risultati attesi
     expected_result = [
         np.array([1.0, 2.0, 5.0]),
         np.array([4.0, 5.0, 8.0]),
@@ -130,13 +133,17 @@ def test_shift_slab_along_z():
     ]
 
     for i in range(len(result)):
-        assert np.array_equal(result[i], expected_result[i]), f"I risultati ottenuti per il punto {i+1} non corrispondono alle aspettative"
-
-# Chiamare la funzione di test
-test_shift_slab_along_z()
+        assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
 
 def test_C_111_high_symmetry_points():
-   # Creare un file di esempio con le coordinate atomiche
+   '''This function is a unit test for the "C_111_high_symmetry_points" function.
+
+      Test Steps:
+        -Create a temporary example file "C_slab_file" containing the structure of a (1x1)C(111) slab in POSCAR format.
+        -Call the "C_111_high_symmetry_points" function three times, each with different high symmetry points:
+          "hollow_fcc", "hollow_hcp", and "top".
+        -Extract the x, y, and z coordinates from the returned results.
+        -Check if the obtained coordinates match the expected values for each high symmetry point.'''
    C_slab_file = 'C_slab.txt'
    with open(C_slab_file, 'w') as f:
        f.writelines('C\n'                                      
@@ -164,33 +171,33 @@ def test_C_111_high_symmetry_points():
    expected_hollow_hcp = [1.2621856,  0.7287232,  6.29757745]
    expected_top = [2.52437121, 1.4574464,  6.64144717]
  
-
-   # Estrai le coordinate x, y e z dall'array
    hollow_fcc_x, hollow_fcc_y, hollow_fcc_z = round(hollow_fcc[0], 8), round(hollow_fcc[1], 8), round(hollow_fcc[2], 8)   
    hollow_hcp_x, hollow_hcp_y, hollow_hcp_z = round(hollow_hcp[0], 8), round(hollow_hcp[1], 8), round(hollow_hcp[2], 8) 
    top_x, top_y, top_z = round(top[0], 8), round(top[1], 8), round(top[2], 8)    
    
-   
-   # Confronta le coordinate con i valori attesi
-   assert hollow_fcc_x == expected_hollow_fcc[0], "La coordinata x ottenuta non corrisponde alle aspettative"
-   assert hollow_fcc_y == expected_hollow_fcc[1], "La coordinata y ottenuta non corrisponde alle aspettative"
-   assert hollow_fcc_z == expected_hollow_fcc[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   assert hollow_fcc_x == expected_hollow_fcc[0], "The obtained x coordinate for hollow_fcc site does not match the expectations."
+   assert hollow_fcc_y == expected_hollow_fcc[1], "The obtained y coordinate for hollow_fcc site does not match the expectations."
+   assert hollow_fcc_z == expected_hollow_fcc[2], "The obtained z coordinate for hollow_fcc site does not match the expectations."
 
-   assert hollow_hcp_x == expected_hollow_hcp[0], "La coordinata x ottenuta non corrisponde alle aspettative"
-   assert hollow_hcp_y == expected_hollow_hcp[1], "La coordinata y ottenuta non corrisponde alle aspettative"
-   assert hollow_hcp_z == expected_hollow_hcp[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   assert hollow_hcp_x == expected_hollow_hcp[0], "The obtained x coordinate for hollow_hcp site does not match the expectations."
+   assert hollow_hcp_y == expected_hollow_hcp[1], "The obtained y coordinate for hollow_hcp site does not match the expectations."
+   assert hollow_hcp_z == expected_hollow_hcp[2], "The obtained z coordinate for hollow_hcp site does not match the expectations."
 
-   assert top_x == expected_top[0], "La coordinata x ottenuta non corrisponde alle aspettative"
-   assert top_y == expected_top[1], "La coordinata y ottenuta non corrisponde alle aspettative"
-   assert top_z == expected_top[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   assert top_x == expected_top[0], "The obtained x coordinate for top site does not match the expectations."
+   assert top_y == expected_top[1], "The obtained y coordinate for top site does not match the expectations."
+   assert top_z == expected_top[2], "The obtained z coordinate for top site does not match the expectations."
    
    os.remove(C_slab_file)
 
-
-test_C_111_high_symmetry_points()
-
 def test_metal_fcc_111_high_symmetry_points():
-   # Creare un file di esempio con le coordinate atomiche
+   '''This function is a unit test for the "metal_fcc_111_high_symmetry_points" function.
+   
+      Test Steps:
+        -Create a temporary example file "metal_fcc_slab_file" containing the structure of a Cu(111) slab in POSCAR format.
+        -Call the "metal_fcc_111_high_symmetry_points" function three times, each with different high symmetry points:
+          "hollow_fcc", "hollow_hcp", and "top".
+        -Extract the x, y, and z coordinates from the returned results.
+        -Check if the obtained coordinates match the expected values for each high symmetry point.'''
    metal_slab_file = 'metal_fcc_slab.txt'
    with open(metal_slab_file, 'w') as f:
        f.writelines('Cu 111\n'                                  
@@ -220,33 +227,33 @@ def test_metal_fcc_111_high_symmetry_points():
    expected_hollow_hcp = [ 0.,          0.,         12.59769298]
    expected_top = [ 1.285 ,      0.7418951,  14.66992578]
  
-
-   # Estrai le coordinate x, y e z dall'array
    hollow_fcc_x, hollow_fcc_y, hollow_fcc_z = round(hollow_fcc[0], 8), round(hollow_fcc[1], 8), round(hollow_fcc[2], 8)   
    hollow_hcp_x, hollow_hcp_y, hollow_hcp_z = round(hollow_hcp[0], 8), round(hollow_hcp[1], 8), round(hollow_hcp[2], 8) 
    top_x, top_y, top_z = round(top[0], 8), round(top[1], 8), round(top[2], 8)    
    
-   
-   # Confronta le coordinate con i valori attesi
-   assert hollow_fcc_x == expected_hollow_fcc[0], "La coordinata x ottenuta non corrisponde alle aspettative"
-   assert hollow_fcc_y == expected_hollow_fcc[1], "La coordinata y ottenuta non corrisponde alle aspettative"
-   assert hollow_fcc_z == expected_hollow_fcc[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   assert hollow_fcc_x == expected_hollow_fcc[0], "The obtained x coordinate for hollow_fcc site does not match the expectations."
+   assert hollow_fcc_y == expected_hollow_fcc[1], "The obtained y coordinate for hollow_fcc site does not match the expectations."
+   assert hollow_fcc_z == expected_hollow_fcc[2], "The obtained z coordinate for hollow_fcc site does not match the expectations."
 
-   assert hollow_hcp_x == expected_hollow_hcp[0], "La coordinata x ottenuta non corrisponde alle aspettative"
-   assert hollow_hcp_y == expected_hollow_hcp[1], "La coordinata y ottenuta non corrisponde alle aspettative"
-   assert hollow_hcp_z == expected_hollow_hcp[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   assert hollow_hcp_x == expected_hollow_hcp[0], "The obtained x coordinate for hollow_hcp site does not match the expectations."
+   assert hollow_hcp_y == expected_hollow_hcp[1], "The obtained y coordinate for hollow_hcp site does not match the expectations."
+   assert hollow_hcp_z == expected_hollow_hcp[2], "The obtained z coordinate for hollow_hcp site does not match the expectations."
 
-   assert top_x == expected_top[0], "La coordinata x ottenuta non corrisponde alle aspettative"
-   assert top_y == expected_top[1], "La coordinata y ottenuta non corrisponde alle aspettative"
-   assert top_z == expected_top[2], "La coordinata z ottenuta non corrisponde alle aspettative"
+   assert top_x == expected_top[0], "The obtained x coordinate for top site does not match the expectations."
+   assert top_y == expected_top[1], "The obtained y coordinate for top site does not match the expectations."
+   assert top_z == expected_top[2], "The obtained z coordinate for top site does not match the expectations."
 
    os.remove(metal_slab_file)
 
-
-test_metal_fcc_111_high_symmetry_points()
-
 def test_shift_slab_on_xy():
-    # Create a temporary file with initial coordinates
+    '''This function is a unit test for the "shift_slab_on_xy" function.
+
+        Test Steps:
+          -Create a temporary file named "POSCAR_temp" containing initial atomic coordinates.
+          -Define the selected reference points for Cu and C atoms: selected_site_Cu and selected_site_C.
+          -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
+          -Define the expected output, which represents the shifted coordinates after the x and y shifts.
+          -Compare the obtained result with the expected output to validate the accuracy of the function.'''
     original_file = "POSCAR_temp"
     with open(original_file, "w") as f:
         f.writelines('Cu 111\n'
@@ -265,14 +272,10 @@ def test_shift_slab_on_xy():
                         '1.285000005         0.741895099         8.393584886\n' 
                         '2.569999857         1.483790197        10.491980720\n' )
 
-    # Define the selected sites Cu and C
     selected_site_Cu = [0.0, 0.0, 0.0]
     selected_site_C = [0.5, 0.5, 0.0]
-
-    # Call the function to get the result
     result = functions.shift_slab_on_xy(original_file, selected_site_Cu, selected_site_C)
 
-    # Define the expected output (shifted coordinates)
     expected_output = [np.array([0.5 ,       0.5 ,  0. ]),
                        np.array([1.785 ,     1.2418951 , 2.098396222]),
                        np.array([3.06999986 ,1.9837902 ,  4.19679244]),
@@ -282,15 +285,18 @@ def test_shift_slab_on_xy():
                        ]
 
     for i in range(len(result)):
-        assert np.allclose(result[i], expected_output[i]), f"I risultati ottenuti per il punto {i+1} non corrispondono alle aspettative"
+        assert np.allclose(result[i], expected_output[i]), f"The obtained results for point {i+1} do not match the expectations."
 
-    # Remove the temporary file after the test
     os.remove(original_file)
 
-test_shift_slab_on_xy()
-
 def test_distance_between_highest_z_values():
-    # Esempio di coordinate
+    '''This function is a unit test for the "distance_between_highest_z_values" function.
+
+        Test Steps:
+            -Define a sample set of atomic coordinates (coords).
+            -Define the expected value for the distance.
+            -Call the distance_between_highest_z_values function with the provided coordinates to get the result.
+            -Compare the obtained result with the expected distance to validate the accuracy of the function.'''
     coords = [
         [1.0, 2.0, 5.0],
         [3.0, 4.0, 8.0],
@@ -298,20 +304,19 @@ def test_distance_between_highest_z_values():
         [7.0, 8.0, 7.0],
     ]
 
-    # Calcola il valore atteso della distanza tra i valori di z più alti
-    sorted_coords = sorted(coords, key=lambda x: x[2], reverse=True)
-    expected_distance = sorted_coords[0][2] - sorted_coords[1][2]
-
-    # Chiama la funzione per ottenere il risultato
+    expected_distance=1.0
     result = functions.distance_between_highest_z_values(coords)
 
-    # Confronta il risultato con il valore atteso
-    assert result == expected_distance, "Test failed: Output doesn't match the expected result"
-
-test_distance_between_highest_z_values()
+    assert result == expected_distance, "Test failed: Output doesn't match the expected result."
 
 def test_write_coords():
-    # Define sample input data as a list of NumPy arrays
+    '''This function is a unit test for the "write_coords" function.
+
+    Test Steps:
+        - Define sample input data, including a list of NumPy arrays representing atomic coordinates (coords)
+          and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
+        - Call the "write_coords" function with the provided input data to get the result.
+        - Compare the obtained result with the expected output to validate the accuracy of the function.'''
     coords = [
         np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
         np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
@@ -321,18 +326,23 @@ def test_write_coords():
     y_relax = False
     z_relax = True
 
-    # Call the function to get the result
     result = functions.write_coords(coords, x_relax, y_relax, z_relax)
 
-    # Define the expected output
     expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  F  T\n', 
                        '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  F  T\n', 
                        '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  F  T\n']
 
-    # Assert that the result matches the expected output
-    assert result == expected_output, "Test failed: Output doesn't match the expected result"
+    assert result == expected_output, "Test failed: Output doesn't match the expected result."
 
-
+test_extract_lattice_vectors()
+test_extract_atomic_coordinates()
+test_direct_to_cartesian_coord()
+test_reflect_coord()
+test_shift_slab_along_z()
+test_C_111_high_symmetry_points()
+test_metal_fcc_111_high_symmetry_points()
+test_shift_slab_on_xy()
+test_distance_between_highest_z_values()
 test_write_coords()
 
 
