@@ -1,6 +1,8 @@
 [settings]
 selected_site_Cu = top
-selected_site_C = hollow_fcc
+selected_site_C = top
+interlayer_distance_bottom_slab = 1.545855346
+interlayer_distance_upper_slab = 2.098396221
 x_relax = true
 y_relax = true
 z_relax = true
