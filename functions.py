@@ -43,8 +43,8 @@ def direct_to_cartesian_coord(a,b,c, direct_coord):
        coordinates.
     
        Args:
-            a,b,c: the three lattice vectors of the cell
-            direct_coord: set of direct coordinates of the atoms
+            a,b,c: the three lattice vectors of the cell.
+            direct_coord: set of direct coordinates of the atoms.
         
        Returns:
             Cartesian coordinates of the atoms as a list of numpy arrays.'''
@@ -75,6 +75,14 @@ def reflect_coord(coord_list, plane_point, plane_normal):
     return reflected_coord
 
 def shift_slab_along_z(coord_list, shift_z):
+    '''This method shifts a list of points in the z direction.
+    
+        Args:
+            coord_list: list of numpy array of shape (3,) representing atomic coordinates.
+            shift_z: the amount of shift to be applied along the z-axis.
+    
+        Returns:
+            List of numpy arrays of shape (3,) representing the shifted points along z.'''
     shifted_coords = []
     for coord in coord_list:
         shifted_coord = np.array([coord[0], coord[1], coord[2] + shift_z])
@@ -82,23 +90,31 @@ def shift_slab_along_z(coord_list, shift_z):
     return shifted_coords
 
 def C_111_high_symmetry_points(file_path, selected_site):
-    original_file = file_path
-    temporary_file = "CONTCAR"
+    '''This method searches the high symmetry points of (1x1)C(111) slab with single 
+        dangling bond termination.
+    
+        Args:
+            file_path: The path to the input file (in POSCAR or CONTCAR format) 
+                       containing the structure information.
+            selected_site: a string indicating the selected high symmetry point. 
+                           It can be "top", "hollow_hcp", or "hollow_fcc".
 
-    # Renaming the original file as the temporary file
+        Returns:
+            A numpy array of shape (3,) representing the coordinates of the selected 
+            high symmetry point. This will play the role of reference site for the coordinate 
+            shift in subsequent calculations.'''
+    original_file = file_path
+    temporary_file = "CONTCAR" #Pymatgen's methods expect the files to be named according to a specific convention.
     os.rename(original_file, temporary_file)
 
-    # Crystalline structure from POSCAR
+    #Get crystalline structure from the file and information about symmetries
     structure = Structure.from_file(temporary_file)
-
-    # Get information about structure symmetry
     analyzer = SpacegroupAnalyzer(structure)
     symmetrized_structure = analyzer.get_symmetrized_structure()
 
-    # Get high symmetry points of the structure
+    #Get high symmetry points of the structure
     high_symmetry_sites = symmetrized_structure.equivalent_sites
 
-    # Select the reference site for the coordinates shift
     selected_site = selected_site 
 
     if selected_site == "top":
@@ -110,29 +126,34 @@ def C_111_high_symmetry_points(file_path, selected_site):
     else:
         print("Reference site not valid.")
         return None
-    # Original file name restoration
+   
     os.rename(temporary_file, original_file)
     return reference_site
 
 def metal_fcc_111_high_symmetry_points(file_path, selected_site):
+    '''This method searches the high symmetry points of (111) surface of fcc metals.
+    
+        Args:
+            file_path: The path to the input file (in POSCAR or CONTCAR format) 
+                   containing the structure information.
+            selected_site: a string indicating the selected high symmetry point. 
+                       It can be "top", "hollow_hcp", or "hollow_fcc".
+        Returns:
+            A numpy array of shape (3,) representing the coordinates of the selected 
+            high symmetry point. This will play the role of reference site for the coordinate 
+            shift in subsequent calculations.'''
     original_file = file_path
-    temporary_file = "CONTCAR"
-
-    # Renaming the original file as the temporary file
+    temporary_file = "CONTCAR" #Pymatgen's methods expect the files to be named according to a specific convention.
     os.rename(original_file, temporary_file)
 
-    # Crystalline structure from POSCAR
+    #Get crystalline structure from the file and information about symmetries
     structure = Structure.from_file(temporary_file)
-
-    # Get information about structure symmetry
     analyzer = SpacegroupAnalyzer(structure)
     symmetrized_structure = analyzer.get_symmetrized_structure()  
 
-    # Get high symmetry points of the structure
+    #Get high symmetry points of the structure
     high_symmetry_sites = symmetrized_structure.equivalent_sites
 
-
-    # Select the reference site for the coordinates shift
     selected_site = selected_site 
 
     if selected_site == "top":
@@ -144,44 +165,78 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     else:
         print("Reference site not valid.")
         return None
-    # Original file name restoration
 
     os.rename(temporary_file, original_file)
     return reference_site
 
-def  shift_slab_on_xy(file_path, selected_site_Cu,selected_site_C):
+def  shift_slab_on_xy(file_path, selected_site_Cu, selected_site_C):
+    '''This method shfits the atomic coordinates in the x and y directions.
+    
+        Args:
+            file_path: The path to the input file (in POSCAR or CONTCAR format) 
+                   containing the structure information.
+            selected_site_Cu: A numpy array of shape (3,) representing the coordinates of a 
+                              selected reference site of the Cu(111) slab.
+            selected_site_C: A numpy array of shape (3,) representing the coordinates of a 
+                             selected reference site of (1x1)C(111) slab.
+                  
+        Returns:
+            A list of numpy arrays with shape (3,) representing the shifted atomic coordinates 
+            along the x and y directions.
+            The atomic coordinates are modified based on the difference between the selected reference
+            site for Cu and C slabs.
+            The function restores the original file name after the shift operation. '''
     original_file = file_path
     temporary_file = "CONTCAR"
-
-    # Renaming the original file as the temporary file
     os.rename(original_file, temporary_file)
 
-    # Crystalline structure from POSCAR
+    #Crystalline structure from file
     structure = Structure.from_file(temporary_file)
     shift_x = selected_site_C[0]-selected_site_Cu[0]
     shift_y = selected_site_C[1]-selected_site_Cu[1]
- # Shifting of the atomic coordinates in the POSCAR file
+    #Shifting of the atomic coordinates in the file
     for site in structure:
         site.coords[0] += shift_x
         site.coords[1] += shift_y
- # Original file name restoration
+
     os.rename(temporary_file, original_file)
- # Restituisci la lista di coordinate shiftate
+
     shifted_coords = [site.coords for site in structure]
     return shifted_coords
 
 def distance_between_highest_z_values(coord):
-    # Ordina le coordinate in base al valore di z in modo decrescente
-    sorted_coord = sorted(coord, key=lambda x: x[2], reverse=True)
+    '''This method calculates the distance between the two highest z-values 
+       in a list of coordinates.
 
-    # Trova i due valori di z più alti
+       Args:
+            coord: A list of numpy arrays with shape (3,) representing the atomic coordinates.
+
+       Returns:
+            The distance between the two highest z-values among the coordinates. 
+            The function first sorts the coordinates based on their z-values in descending order. 
+            It then selects the two coordinates with the highest z-values and calculates the 
+            difference between these two values to obtain the distance.'''
+    sorted_coord = sorted(coord, key=lambda x: x[2], reverse=True)
     highest_z_values = sorted_coord[:2]
-    # Calcola la distanza tra i due valori di z più alti
     distance = highest_z_values[0][2] - highest_z_values[1][2]
 
     return distance
 
 def write_coords(coords, x_relax, y_relax, z_relax):
+    '''This method converts a list of atomic coordinates and relaxation options 
+       into a formatted string representation.
+
+       Args:
+            coords: A list of numpy arrays with shape (3,) representing the atomic coordinates.
+            x_relax: A boolean value indicating whether the relaxation is allowed along the x-direction.
+            y_relax: A boolean value indicating whether the relaxation is allowed along the y-direction.
+            z_relax: A boolean value indicating whether the relaxation is allowed along the z-direction.
+
+       Returns:
+            A list of strings, each representing a formatted line of atomic coordinates along with 
+            the relaxation options. The function iterates over the input coordinates and converts each 
+            coordinate to a string with a specific format. The relaxation options (x_relax, y_relax, z_relax) 
+            are represented by "T" (True) or "F" (False) and appended to the string.'''
     atom_coords = []
     for coord in coords:
         coord_string = "{}  {}  {}  {}\n".format(
@@ -193,7 +248,22 @@ def write_coords(coords, x_relax, y_relax, z_relax):
         atom_coords.append(coord_string)   
     return atom_coords  
 
-def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_bottom_slab, x_relax, y_relax, z_relax, cartesian_coord_upper_slab, a,b,c):
+def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_bottom_slab, 
+                           x_relax, y_relax, z_relax, cartesian_coord_upper_slab, a,b,c):
+    '''This method creates a new POSCAR file representing the interface between two slabs.
+
+        Args:
+            input_file_upper: the path to the input file containing the structure information of the upper slab.
+            input_file_bottom: the path to the input file containing the structure information of the bottom slab.
+            cartesian_coord_bottom_slab: a list of numpy arrays representing the Cartesian coordinates of the bottom slab atoms.
+            x_relax, y_relax, z_relax: boolean values indicating whether relaxation is allowed along x, y, and z directions, respectively.
+            cartesian_coord_upper_slab: a list of numpy arrays representing the Cartesian coordinates of the upper slab atoms.
+            a, b, c: three lattice vectors representing the lattice of the interface structure.
+
+        Returns:
+            A new POSCAR file that represents the interface between the two slabs. 
+            It combines the header, lattice vectors, atom types, and atom numbers from the input files for the bottom and upper slabs. 
+            The Cartesian coordinates of the atoms in the interface supercell are written along with their relaxation options.'''
     with open(input_file_upper, 'r') as f:
         upper_slab_lines = f.readlines()
         HeaderUpperSlab = upper_slab_lines[0].strip()
