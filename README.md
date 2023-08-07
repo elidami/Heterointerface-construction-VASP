@@ -32,6 +32,8 @@ Copy and paste the CONTCAR file of the considered atom adsorption on the upper s
    - `x_relax`, `y_relax` and `z_relax` can take `true` or `false` values, representing relaxation options for interface optimization calculations, performed with VASP.
 3. Run the script with the command `python decorated_interface.py configuration.txt`.
 
+In both cases, an output file named POSCAR is created in the main folder of the code. 
+
 
 ## The code
 
