@@ -1,6 +1,6 @@
 # Heterointerface construction VASP
 
-## Table of content
+# Table of content
 
 - [Abstract](#sezione-1)
 - [How to](#sezione-2)
@@ -14,7 +14,7 @@ In particular, for the clean interface case, the code is able to handle systems 
 
 
 ## How to
-In order to use this code, 
+In order to start using this code, the user has to download the .zip folder and install the three python libraries on which the script is based: numpy, pandas and pymatgen. The installation of the packages can be done via pip ('pip install <package name>') or, if a conda environment is used, using the command 'conda install <package name>'.
 
 
 ## The code
