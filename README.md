@@ -2,10 +2,10 @@
 
 ## Table of content
 
-- [Abstract](#sezione-1)
-- [How to](#sezione-2)
-- [The code](#sezione-3)
-- [Results](#sezione-4)
+- [Abstract](#abstract)
+- [How to](#how-to)
+- [The code](#the-code)
+- [Results](#results)
 
 ## Abstract
 This project aims to create the POSCAR file of clean and decorated heterogeneous interfaces, which can be used as input for VASP calculations.  
