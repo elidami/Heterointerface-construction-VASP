@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pymatgen.core.structure import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.analysis.adsorption import AdsorbateSiteFinder
 import os
 
 def extract_lattice_vectors(filename):
@@ -169,14 +170,14 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     os.rename(temporary_file, original_file)
     return reference_site
 
-def  shift_slab_on_xy(file_path, selected_site_Cu, selected_site_C):
+def  shift_slab_on_xy(file_path, selected_site_metal, selected_site_C):
     '''This method shfits the atomic coordinates in the x and y directions.
     
         Args:
             file_path: The path to the input file (in POSCAR or CONTCAR format) 
                    containing the structure information.
-            selected_site_Cu: A numpy array of shape (3,) representing the coordinates of a 
-                              selected reference site of the Cu(111) slab.
+            selected_site_metal: A numpy array of shape (3,) representing the coordinates of a 
+                              selected reference site of the metal(111) slab.
             selected_site_C: A numpy array of shape (3,) representing the coordinates of a 
                              selected reference site of (1x1)C(111) slab.
                   
@@ -184,7 +185,7 @@ def  shift_slab_on_xy(file_path, selected_site_Cu, selected_site_C):
             A list of numpy arrays with shape (3,) representing the shifted atomic coordinates 
             along the x and y directions.
             The atomic coordinates are modified based on the difference between the selected reference
-            site for Cu and C slabs.
+            site for metal and C slabs.
             The function restores the original file name after the shift operation. '''
     original_file = file_path
     temporary_file = "CONTCAR"
@@ -192,8 +193,8 @@ def  shift_slab_on_xy(file_path, selected_site_Cu, selected_site_C):
 
     #Crystalline structure from file
     structure = Structure.from_file(temporary_file)
-    shift_x = selected_site_C[0]-selected_site_Cu[0]
-    shift_y = selected_site_C[1]-selected_site_Cu[1]
+    shift_x = selected_site_C[0]-selected_site_metal[0]
+    shift_y = selected_site_C[1]-selected_site_metal[1]
     #Shifting of the atomic coordinates in the file
     for site in structure:
         site.coords[0] += shift_x

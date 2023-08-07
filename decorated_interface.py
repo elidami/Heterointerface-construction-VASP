@@ -29,9 +29,9 @@ cartesian_coord_upper_slab =  functions.direct_to_cartesian_coord(a, b, c, atomi
 cartesian_coord_adsorption =  functions.direct_to_cartesian_coord(a_adsorption, b_adosrption, c_adsorption, atomic_coord_adsorption)
 
 # Shift upper slab on xy plane so that its selected high symmetry point is aligned with the adatom adsorbed on bottom slab
-selected_site_Cu = config.get('settings', 'selected_site_Cu')
-reference_site_Cu = functions.metal_fcc_111_high_symmetry_points("decorated_interface_files/upper_slab.txt",selected_site_Cu)
-upper_slab_coords_for_adatom_adsorption = functions.shift_slab_on_xy("decorated_interface_files/upper_slab.txt", reference_site_Cu,max(cartesian_coord_bottom_slab, key=lambda x: x[2]))
+selected_site_metal = config.get('settings', 'selected_site_metal')
+reference_site_metal = functions.metal_fcc_111_high_symmetry_points("decorated_interface_files/upper_slab.txt",selected_site_metal)
+upper_slab_coords_for_adatom_adsorption = functions.shift_slab_on_xy("decorated_interface_files/upper_slab.txt", reference_site_metal,max(cartesian_coord_bottom_slab, key=lambda x: x[2]))
 
 # Reflect atomic coordinates of the upper slab with respect to its highest atom along z direction
 z = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
