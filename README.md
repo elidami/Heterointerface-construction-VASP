@@ -36,6 +36,15 @@ In both cases, an output file named POSCAR is created in the main folder of the 
 
 
 ## The code
-
+The project is divided in four parts:  
+1. The file *interface.py* is the script that creates the POSCAR of the clean interface and is related to the input files contained in the folder *clean_interface_files*. First, the script extracts the lattice vectors and the atomic coordinates from the two input files. Then, it takes the two selected high symmetry sites on C and metal slabs and perform a shift of the upper slab on the xy plane, so that the two reference points are aligned. The upper slab is reflected with respect to its highest atom along z direction and is *z*-shifted so that the distance between the two slabs is the average of their interlayer distances.  
+Finally, the lattice vectors of the supercell and the atomic coordinates that constitue the interface system are written in a output file in POSCAR format, that can be used directly for VASP calculations. 
+3. The file *decorated_interface.py* is the script that creates the POSCAR of the decorated interface and is related to the input files contained in the folder *decorated_interface_files*. It works in a similar way to the previous case, with the difference that now only the high symmetry site of the metal slab needs to be selected and the *xy* shift is performed so that the metal reference site is aligned to the atom adsorbed on the diamond surface. Moreover, the shift of the upper metal slab along the *z* direction is determined by the distance that the atom has from the surface atomic plane when it is adsorbed on the upper slab. This is why the user has to provide also the file *./decorated_interface_files/adsorption_on_upper_slab.txt*.
+4. The files *configuration.txt* and *functions.py* are in common for both clean and decorated interface calculations:
+   - *configuration.txt* contains the input variables that needs to be specified by the user.
+   - *functions.py* contains all the methods on which the two main scripts are based.
+5. The file *testing.py* contains the tests of the methods written in *functions.py*.
 
 ## Results
+The output of the code is a text file called POSCAR, written in a readable format for VASP.  
+Here is an example:
