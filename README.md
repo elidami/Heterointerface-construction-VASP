@@ -123,6 +123,14 @@ Cartesian
 2.5035690000000002   1.4454350000000020   12.6492924592003515   T  T  T
 3.7553530000000150   2.1681530000000104   10.5247797344977165   T  T  T
 ```
-This type of file, which contains information on the geometry of the system, can be visualized with **VESTA**, a 3D visualization program for structural models, volumetric data such as electron/nuclear densities, and crystal morphologies.
+This type of file, which contains information on the geometry of the system, can be visualized with **VESTA**, a 3D visualization program for structural models, volumetric data such as electron/nuclear densities, and crystal morphologies. 
+
 Here are two examples of what the interfaces created with this script look like:  
-1. 
+
+1. **Clean interface**
+
+   <img src="/images/clean_interface.png"  height="500">
+
+2. **Decorated interface**
+
+   <img src="/images/decorated_interface.png"  height="500">
