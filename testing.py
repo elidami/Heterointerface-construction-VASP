@@ -334,17 +334,6 @@ def test_write_coords():
 
     assert result == expected_output, "Test failed: Output doesn't match the expected result."
 
-test_extract_lattice_vectors()
-test_extract_atomic_coordinates()
-test_direct_to_cartesian_coord()
-test_reflect_coord()
-test_shift_slab_along_z()
-test_C_111_high_symmetry_points()
-test_metal_fcc_111_high_symmetry_points()
-test_shift_slab_on_xy()
-test_distance_between_highest_z_values()
-test_write_coords()
-
 
 
 
