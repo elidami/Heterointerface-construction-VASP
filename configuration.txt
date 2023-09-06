@@ -6,3 +6,10 @@ interlayer_distance_upper_slab = 2.098396221
 x_relax = true
 y_relax = true
 z_relax = true
+
+[paths]
+clean_upper_slab: clean_interface_files/upper_slab.txt
+clean_bottom_slab: clean_interface_files/bottom_slab.txt
+decorated_upper_slab: decorated_interface_files/upper_slab.txt
+adsorption_on_upper_slab: decorated_interface_files/adsorption_on_upper_slab.txt
+bottom_slab_with_adatom: decorated_interface_files/bottom_slab_with_adatom.txt
