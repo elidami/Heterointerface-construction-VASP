@@ -30,7 +30,7 @@ def extract_atomic_coordinates(filename):
             filename: path to the text file 
        
        Returns:
-            The atomic coordinates.'''
+            List of numpy array of shape (3,) representing atomic coordinates.'''
     df = pd.read_csv(filename, skiprows= 9, sep='\s+', header=None, engine='python')
     
     last_row_index = int(len(df.index)/2) #In order to exclude the series of numbers 0 (initial velocities of atoms), division by 2 is necessary.
@@ -44,11 +44,11 @@ def direct_to_cartesian_coord(a,b,c, direct_coord):
        coordinates.
     
        Args:
-            a,b,c: the three lattice vectors of the cell.
-            direct_coord: set of direct coordinates of the atoms.
+            a,b,c: three numpy arrays of shape (3,) representing the three lattice vectors of the cell.
+            direct_coord: list of numpy array of shape (3,) representing direct atomic coordinates.
         
        Returns:
-            Cartesian coordinates of the atoms as a list of numpy arrays.'''
+            Cartesian coordinates of the atoms as a list of numpy arrays of shape (3,).'''
     cartesian_coords = []
     for coord in direct_coord:
         cartesian_coord = coord[0] * a + coord[1] * b + coord[2] * c
@@ -92,7 +92,8 @@ def shift_slab_along_z(coord_list, shift_z):
 
 def C_111_high_symmetry_points(file_path, selected_site):
     '''This method searches the high symmetry points of (1x1)C(111) slab with single 
-        dangling bond termination.
+        dangling bond termination. These points will play the role of reference sites
+        for the coordinate shifts in subsequent calculations.
     
         Args:
             file_path: The path to the input file (in POSCAR or CONTCAR format) 
@@ -102,8 +103,7 @@ def C_111_high_symmetry_points(file_path, selected_site):
 
         Returns:
             A numpy array of shape (3,) representing the coordinates of the selected 
-            high symmetry point. This will play the role of reference site for the coordinate 
-            shift in subsequent calculations.'''
+            high symmetry point.'''
     original_file = file_path
     temporary_file = "CONTCAR" #Pymatgen's methods expect the files to be named according to a specific convention.
     os.rename(original_file, temporary_file)
@@ -133,6 +133,8 @@ def C_111_high_symmetry_points(file_path, selected_site):
 
 def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     '''This method searches the high symmetry points of (111) surface of fcc metals.
+       These points will play the role of reference sites for the coordinate shifts 
+       in subsequent calculations.
     
         Args:
             file_path: The path to the input file (in POSCAR or CONTCAR format) 
@@ -141,8 +143,7 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
                        It can be "top", "hollow_hcp", or "hollow_fcc".
         Returns:
             A numpy array of shape (3,) representing the coordinates of the selected 
-            high symmetry point. This will play the role of reference site for the coordinate 
-            shift in subsequent calculations.'''
+            high symmetry point.'''
     original_file = file_path
     temporary_file = "CONTCAR" #Pymatgen's methods expect the files to be named according to a specific convention.
     os.rename(original_file, temporary_file)
@@ -171,7 +172,9 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     return reference_site
 
 def  shift_slab_on_xy(file_path, selected_site_metal, selected_site_C):
-    '''This method shfits the atomic coordinates in the x and y directions.
+    '''This method shfits the atomic coordinates in the x and y directions, 
+       according to the difference between the selected reference site for metal and C slabs.
+       The function restores the original file name after the shift operation.
     
         Args:
             file_path: The path to the input file (in POSCAR or CONTCAR format) 
@@ -183,10 +186,7 @@ def  shift_slab_on_xy(file_path, selected_site_metal, selected_site_C):
                   
         Returns:
             A list of numpy arrays with shape (3,) representing the shifted atomic coordinates 
-            along the x and y directions.
-            The atomic coordinates are modified based on the difference between the selected reference
-            site for metal and C slabs.
-            The function restores the original file name after the shift operation. '''
+            along the x and y directions.'''
     original_file = file_path
     temporary_file = "CONTCAR"
     os.rename(original_file, temporary_file)
@@ -267,29 +267,29 @@ def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_b
             The Cartesian coordinates of the atoms in the interface supercell are written along with their relaxation options.'''
     with open(input_file_upper, 'r') as f:
         upper_slab_lines = f.readlines()
-        HeaderUpperSlab = upper_slab_lines[0].strip()
-        AtomTypeUpperSlab = upper_slab_lines[5].strip()
-        AtomNumberUpperSlab = upper_slab_lines[6].strip()
+        headerUpperSlab = upper_slab_lines[0].strip()
+        atomTypeUpperSlab = upper_slab_lines[5].strip()
+        atomNumberUpperSlab = upper_slab_lines[6].strip()
 
     with open(input_file_bottom, 'r') as f:
         bottom_slab_lines = f.readlines()
-        HeaderBottomSlab = bottom_slab_lines[0].strip()
-        AtomTypeBottomSlab = bottom_slab_lines[5].strip()
-        AtomNumberBottomSlab = bottom_slab_lines[6].strip()
+        headerBottomSlab = bottom_slab_lines[0].strip()
+        atomTypeBottomSlab = bottom_slab_lines[5].strip()
+        atomNumberBottomSlab = bottom_slab_lines[6].strip()
 
-    AtomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
-    AtomCoordsUpperSlab = write_coords(cartesian_coord_upper_slab, x_relax, y_relax, z_relax)
+    atomCoordsBottomSlab = write_coords(cartesian_coord_bottom_slab, x_relax, y_relax, z_relax)
+    atomCoordsUpperSlab = write_coords(cartesian_coord_upper_slab, x_relax, y_relax, z_relax)
 
-    HeaderAndScalingFactor = ["INTERFACE {}/{}\n".format(HeaderBottomSlab, HeaderUpperSlab), "1.0\n"]
-    LatticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
-    AtomTypes = ["{} {}\n".format(AtomTypeBottomSlab, AtomTypeUpperSlab)]
-    AtomNumbers = ["{} {}\n".format(AtomNumberBottomSlab, AtomNumberUpperSlab)]
+    headerAndScalingFactor = ["INTERFACE {}/{}\n".format(headerBottomSlab, headerUpperSlab), "1.0\n"]
+    latticeVectors = ["{}\n".format(' '.join(["{:<20.16f}".format(value) for value in vector])) for vector in [a, b, c]]
+    atomTypes = ["{} {}\n".format(atomTypeBottomSlab, atomTypeUpperSlab)]
+    atomNumbers = ["{} {}\n".format(atomNumberBottomSlab, atomNumberUpperSlab)]
 
     with open('POSCAR', 'w') as f:
-        f.writelines(HeaderAndScalingFactor)
-        f.writelines(LatticeVectors)
-        f.writelines(AtomTypes)
-        f.writelines(AtomNumbers)
+        f.writelines(headerAndScalingFactor)
+        f.writelines(latticeVectors)
+        f.writelines(atomTypes)
+        f.writelines(atomNumbers)
         f.writelines("Selective Dynamics\nCartesian\n")
-        f.writelines(AtomCoordsBottomSlab)
-        f.writelines(AtomCoordsUpperSlab)
+        f.writelines(atomCoordsBottomSlab)
+        f.writelines(atomCoordsUpperSlab)
