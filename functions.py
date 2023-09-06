@@ -56,6 +56,24 @@ def direct_to_cartesian_coord(a,b,c, direct_coord):
     
     return cartesian_coords
 
+def calculate_plane_parameters(cartesian_coord):
+    '''This method computes the plane parameters (a point and a normal vector) required for a 
+       subsequent reflection operation.
+       In particular, the function identifies the highest atom in the slab along the z-axis and sets 
+       this as the reference point for the plane. The plane's normal vector is [0, 0, 1], so parallel to the z-axis. 
+       These parameters will be then used to perform a reflection operation.
+       
+        Args:
+            cartesian_coord: list of numpy arrays of shape (3,) representing atomic coordinates.
+
+        Returns:
+            plane_point: a numpy array of shape (3,) representing the point on the plane.
+            plane_normal: a numpy array of shape (3,) representing the normal vector to the plane.'''
+    z = max(cartesian_coord, key=lambda x: x[2])[2]
+    plane_point = np.array([0, 0, z])
+    plane_normal = np.array([0, 0, 1])
+    return plane_point, plane_normal
+
 def reflect_coord(coord_list, plane_point, plane_normal):
     '''This method reflects a list of points across a plane, which is
        defined by a point on the plane and its normal vector.

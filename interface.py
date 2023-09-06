@@ -31,9 +31,7 @@ reference_site_C = functions.C_111_high_symmetry_points(bottom_slab, selected_si
 shifted_upper_slab_on_xy = functions.shift_slab_on_xy(upper_slab, reference_site_metal,reference_site_C)
 
 # Reflect atomic coordinates of the upper slab with respect to its highest atom along z direction
-z = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
-plane_point = np.array([0, 0,  z])
-plane_normal = np.array([0, 0, 1])
+plane_point, plane_normal = functions.calculate_plane_parameters(cartesian_coord_upper_slab)
 reflected_coords =  functions.reflect_coord(shifted_upper_slab_on_xy, plane_point, plane_normal)
 
 # The distance between the two slabs is given by the average value of their respective interlayer distances

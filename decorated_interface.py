@@ -38,9 +38,7 @@ reference_site_metal = functions.metal_fcc_111_high_symmetry_points(upper_slab,s
 upper_slab_coords_for_adatom_adsorption = functions.shift_slab_on_xy(upper_slab, reference_site_metal,max(cartesian_coord_bottom_slab, key=lambda x: x[2]))
 
 # Reflect atomic coordinates of the upper slab with respect to its highest atom along z direction
-z = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
-plane_point = np.array([0, 0,  z])
-plane_normal = np.array([0, 0, 1])
+plane_point, plane_normal = functions.calculate_plane_parameters(cartesian_coord_upper_slab)
 reflected_coords =  functions.reflect_coord(upper_slab_coords_for_adatom_adsorption, plane_point, plane_normal)
 
 # The distance between the two slabs is determined by the distance of the adatom when it is adsorbed on the upper slab  
