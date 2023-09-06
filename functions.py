@@ -116,8 +116,6 @@ def C_111_high_symmetry_points(file_path, selected_site):
     #Get high symmetry points of the structure
     high_symmetry_sites = symmetrized_structure.equivalent_sites
 
-    selected_site = selected_site 
-
     if selected_site == "top":
         reference_site = high_symmetry_sites[0][1].coords
     elif selected_site == "hollow_hcp":
@@ -155,8 +153,6 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
 
     #Get high symmetry points of the structure
     high_symmetry_sites = symmetrized_structure.equivalent_sites
-
-    selected_site = selected_site 
 
     if selected_site == "top":
         reference_site = high_symmetry_sites[0][1].coords
