@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from pymatgen.core.structure import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.analysis.adsorption import AdsorbateSiteFinder
 import os
 
 def extract_lattice_vectors(filename):
