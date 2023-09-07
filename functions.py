@@ -120,7 +120,10 @@ def C_111_high_symmetry_points(file_path, selected_site):
 
         Returns:
             A numpy array of shape (3,) representing the coordinates of the selected 
-            high symmetry point.'''
+            high symmetry point.
+        
+        Raises:
+            ValueError: If the provided 'selected_site' is not one of the valid options ("top", "hollow_hcp", or "hollow_fcc").'''
     original_file = file_path
     temporary_file = "CONTCAR" #Pymatgen's methods expect the files to be named according to a specific convention.
     os.rename(original_file, temporary_file)
@@ -140,8 +143,7 @@ def C_111_high_symmetry_points(file_path, selected_site):
     elif selected_site == "hollow_fcc":
         reference_site = high_symmetry_sites[3][1].coords
     else:
-        print("Reference site not valid.")
-        return None
+        raise ValueError("Invalid 'selected_site' option. Please use one of the valid options: 'top', 'hollow_hcp', or 'hollow_fcc'.")
    
     os.rename(temporary_file, original_file)
     return reference_site
@@ -158,7 +160,10 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
                        It can be "top", "hollow_hcp", or "hollow_fcc".
         Returns:
             A numpy array of shape (3,) representing the coordinates of the selected 
-            high symmetry point.'''
+            high symmetry point.
+            
+        Raises:
+            ValueError: If the provided 'selected_site' is not one of the valid options ("top", "hollow_hcp", or "hollow_fcc").'''
     original_file = file_path
     temporary_file = "CONTCAR" #Pymatgen's methods expect the files to be named according to a specific convention.
     os.rename(original_file, temporary_file)
@@ -178,8 +183,7 @@ def metal_fcc_111_high_symmetry_points(file_path, selected_site):
     elif selected_site == "hollow_fcc":
         reference_site = high_symmetry_sites[2][1].coords
     else:
-        print("Reference site not valid.")
-        return None
+        raise ValueError("Invalid 'selected_site' option. Please use one of the valid options: 'top', 'hollow_hcp', or 'hollow_fcc'.")
 
     os.rename(temporary_file, original_file)
     return reference_site
@@ -235,6 +239,26 @@ def distance_between_highest_z_values(coord):
     distance = highest_z_values[0][2] - highest_z_values[1][2]
 
     return distance
+
+def calculate_shift_z_clean_case(interlayer_distance_bottom_slab, interlayer_distance_upper_slab,
+                      cartesian_coord_bottom_slab, cartesian_coord_upper_slab):
+    slabs_distance = (interlayer_distance_bottom_slab + interlayer_distance_upper_slab) / 2
+    max_z_bottom_slab = max(cartesian_coord_bottom_slab, key=lambda x: x[2])[2]
+    max_z_upper_slab = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
+
+    shift_z = max_z_bottom_slab + slabs_distance - max_z_upper_slab
+
+    return shift_z
+
+
+def calculate_shift_z_decorated_case(cartesian_coord_bottom_slab, cartesian_coord_adsorption, cartesian_coord_upper_slab):
+    max_z_bottom_slab = max(cartesian_coord_bottom_slab, key=lambda x: x[2])[2]
+    max_z_upper_slab = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
+
+    shift_z = max_z_bottom_slab + distance_between_highest_z_values(cartesian_coord_adsorption) - max_z_upper_slab
+
+    return shift_z
+
 
 def write_coords(coords, x_relax, y_relax, z_relax):
     '''This method converts a list of atomic coordinates and relaxation options 
