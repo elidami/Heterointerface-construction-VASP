@@ -22,7 +22,7 @@ If the user wants to create the POSCAR file of a **CLEAN INTERFACE** he/she has 
    - `interlayer_distance_bottom_slab` and `interlayer_distance_upper_slab`: float values representing the interlayer distance between atoms in the bottom and upper slabs, respectively.
    - `x_relax`, `y_relax` and `z_relax` can take `true` or `false` values, representing relaxation options for interface optimization calculations, performed with VASP.
    - `clean_upper_slab`: path to the CONTCAR file of the relaxed upper slab.
-   - `clean_bottom_slab`: path to the CONTCAR file of the relaxed bottom slab.
+   - `clean_bottom_slab`: path to the CONTCAR file of the relaxed bottom slab.  
    **N.B.** The two CONTCAR files need to have the same lattice vectors, which will be the ones that describe the interface supercell.
 2. Run the script with the command `python interface.py configuration.txt`.
 
@@ -31,7 +31,7 @@ If the user wants to create the POSCAR file of a **DECORATED INTERFACE** he/she 
    - `selected_site_metal` representing the high symmetry points of the metal slab. The code will perform a shift on the xy plane so that the intercalated atom is positioned on the metal selected site. The variable can take three possible strings: `top`, `hollow_hcp`, `hollow_fcc`.
    - `x_relax`, `y_relax` and `z_relax` can take `true` or `false` values, representing relaxation options for interface optimization calculations, performed with VASP.
    - `decorated_upper_slab`: path to the CONTCAR file of the relaxed upper metal slab.
-   - `bottom_slab_with_adatom`: path to the CONTCAR file of the relaxed bottom diamond slab with the already adsorbed atom.
+   - `bottom_slab_with_adatom`: path to the CONTCAR file of the relaxed bottom diamond slab with the already adsorbed atom.   
    **N.B.** These two CONTCAR files need to have the same lattice vectors, which will be the ones that describe the interface supercell.
    - `adsorption_on_upper_slab`: path to the CONTCAR file of the considered atom adsorption on the upper slab. In this case the lattice vectors does not need to be the same as the ones describing the interface supercell.
 2. Run the script with the command `python decorated_interface.py configuration.txt`.
