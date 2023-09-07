@@ -241,21 +241,44 @@ def distance_between_highest_z_values(coord):
     return distance
 
 def calculate_shift_z_clean_case(interlayer_distance_bottom_slab, interlayer_distance_upper_slab,
-                      cartesian_coord_bottom_slab, cartesian_coord_upper_slab):
+                     coord_bottom_slab, coord_upper_slab):
+    '''This method calculates the value of the shift to perform in the z direction. 
+       For the clean case, the shift on z has to be determined so that the distance 
+       between the two slabs is equal to the average value of the interlayer distances of
+       the two different slabs.
+    
+        Args:
+            interlayer_distance_bottom_slab: float number representing the interlayer distance of the bottom slab.
+            interlayer_distance_upper_slab: float number representing the interlayer distance of the upper slab.
+            coord_bottom_slab: list of numpy array of shape (3,) representing atomic coordinates of bottom slab.
+            coord_upper_slab: list of numpy array of shape (3,) representing atomic coordinates of upper slab.
+    
+        Returns:
+            Float number representing the shift along z direction.'''
     slabs_distance = (interlayer_distance_bottom_slab + interlayer_distance_upper_slab) / 2
-    max_z_bottom_slab = max(cartesian_coord_bottom_slab, key=lambda x: x[2])[2]
-    max_z_upper_slab = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
+    max_z_bottom_slab = max(coord_bottom_slab, key=lambda x: x[2])[2]
+    max_z_upper_slab = max(coord_upper_slab, key=lambda x: x[2])[2]
 
     shift_z = max_z_bottom_slab + slabs_distance - max_z_upper_slab
-
     return shift_z
 
 
-def calculate_shift_z_decorated_case(cartesian_coord_bottom_slab, cartesian_coord_adsorption, cartesian_coord_upper_slab):
-    max_z_bottom_slab = max(cartesian_coord_bottom_slab, key=lambda x: x[2])[2]
-    max_z_upper_slab = max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
+def calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_upper_slab):
+    '''This method calculates the value of the shift to perform in the z direction. 
+       For the decorated case, the shift in the z-direction is determined in such a way that 
+       the atom is positioned at its optimal adsorption distance on the upper slab. 
+       
+        Args:
+            coord_bottom_slab: list of numpy array of shape (3,) representing atomic coordinates of bottom slab.
+            coord_adsorption: list of numpy array of shape (3,) representing atomic coordinates of upper slab with adatom.
+            coord_upper_slab: list of numpy array of shape (3,) representing atomic coordinates of upper slab.
+    
+        Returns:
+            Float number representing the shift along z direction.'''
+    max_z_bottom_slab = max(coord_bottom_slab, key=lambda x: x[2])[2]
+    max_z_upper_slab = max(coord_upper_slab, key=lambda x: x[2])[2]
 
-    shift_z = max_z_bottom_slab + distance_between_highest_z_values(cartesian_coord_adsorption) - max_z_upper_slab
+    shift_z = max_z_bottom_slab + distance_between_highest_z_values(coord_adsorption) - max_z_upper_slab
 
     return shift_z
 
