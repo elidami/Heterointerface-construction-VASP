@@ -33,7 +33,8 @@ def test_extract_lattice_vectors():
     os.remove(lattice_file)
 
 def test_extract_atomic_coordinates():
-    '''This function is a unit test for the "extract_atomic_coordinates" function.
+    '''This test ensures that the "extract_atomic_coordinates" function extracts correctly 
+       the three generic atomic coordinates written in the example text file.
 
        Test Steps:
             -Create a temporary example file named "atomic_coordinates.csv" with atomic coordinates.
@@ -60,7 +61,9 @@ def test_extract_atomic_coordinates():
     os.remove(coordinates_file)
 
 def test_direct_to_cartesian_coord():
-    '''This function is a unit test for the "direct_to_cartesian_coord" function.
+    '''This test ensures that the "direct_to_cartesian_coord" function correctly converts
+       two generic direct coordinates into the corresponding cartesian coordinates. 
+       Three generic lattice vectors have been chosen to perform the test.
 
         Test Steps:
             -Define the lattice vectors 'a', 'b', and 'c' representing the lattice of the structure.
