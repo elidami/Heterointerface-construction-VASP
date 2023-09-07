@@ -36,8 +36,7 @@ reflected_coords =  functions.reflect_coord(shifted_upper_slab_on_xy, plane_poin
 # The distance between the two slabs is given by the average value of their respective interlayer distances
 interlayer_distance_bottom_slab = float(config.get('settings', 'interlayer_distance_bottom_slab'))
 interlayer_distance_upper_slab = float(config.get('settings', 'interlayer_distance_upper_slab'))
-slabs_distance = (interlayer_distance_bottom_slab+interlayer_distance_upper_slab)/2
-shift_z = max(cartesian_coord_bottom_slab, key=lambda x: x[2])[2]+slabs_distance-max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
+shift_z = functions.calculate_shift_z_clean_case(interlayer_distance_bottom_slab, interlayer_distance_upper_slab,cartesian_coord_bottom_slab, cartesian_coord_upper_slab)
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
 
 x_relax = config.get('settings', 'x_relax')

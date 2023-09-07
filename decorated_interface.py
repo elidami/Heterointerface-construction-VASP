@@ -41,9 +41,8 @@ plane_point, plane_normal = functions.calculate_plane_parameters(cartesian_coord
 reflected_coords =  functions.reflect_coord(upper_slab_coords_for_adatom_adsorption, plane_point, plane_normal)
 
 # The distance between the two slabs is determined by the distance of the adatom when it is adsorbed on the upper slab  
-shift_z = max(cartesian_coord_bottom_slab, key=lambda x: x[2])[2]+functions.distance_between_highest_z_values(cartesian_coord_adsorption)-max(cartesian_coord_upper_slab, key=lambda x: x[2])[2]
+shift_z = functions.calculate_shift_z_decorated_case(cartesian_coord_bottom_slab, cartesian_coord_adsorption, cartesian_coord_upper_slab)
 shifted_coords =  functions.shift_slab_along_z(reflected_coords,shift_z)
-
 x_relax = config.get('settings', 'x_relax')
 y_relax = config.get('settings', 'y_relax')
 z_relax = config.get('settings', 'z_relax')
