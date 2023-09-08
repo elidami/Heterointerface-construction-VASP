@@ -63,57 +63,78 @@ class TestAtomicCoordinatesExtraction(unittest.TestCase):
 
         os.remove(coordinates_file)
 
-def test_direct_to_cartesian_coord():
-    '''This test ensures that the "direct_to_cartesian_coord" function correctly converts
-       two generic direct coordinates into the corresponding cartesian coordinates. 
-       Three generic lattice vectors have been chosen to perform the test.
+class TestDirectToCartesian(unittest.TestCase):
+    '''This test class ensures that the "direct_to_cartesian_coord" function correctly converts
+       two sets of direct coordinates into the corresponding cartesian coordinates. 
 
-        Test Steps:
-            -Define the lattice vectors 'a', 'b', and 'c' representing the lattice of the structure.
+        Each test function is characterized by these steps:
+            -Defined the three lattice vectors 'a', 'b', and 'c' representing the lattice of the structure
             -Define the direct coordinates 'direct_coord' as a numpy array containing two sets of direct coordinates.
             -Execute the "direct_to_cartesian_coord" function, passing the lattice vectors and direct coordinates as input.
             -Verify if the returned results match the expected Cartesian coordinates.'''
-    a = np.array([1.00, 0.00, 0.00])
-    b = np.array([0.00, 2.00, 0.00])
-    c = np.array([0.00, 0.00, 3.00])
 
-    direct_coord = np.array([[0.25, 0.50, 0.75], [0.10, 0.20, 0.30]])
+    def test_generic_direct_coords(self):
+        '''In this function three different sets of coordinates are tested: 
+            - set of positive coordinates
+            - set of coordinates equal to zero
+            - set of negative coordinates '''
+        a = np.array([1.00, 0.00, 0.00])
+        b = np.array([0.00, 2.00, 0.00])
+        c = np.array([0.00, 0.00, 3.00])
+        direct_coord = np.array([[0.25, 0.50, 0.75], [0, 0, 0], [-0.10, -0.20, -0.30] ])
+        result = functions.direct_to_cartesian_coord(a, b, c, direct_coord)
+        expected_result = [
+            np.array([0.25, 1, 2.25]),
+            np.array([0, 0, 0]),
+            np.array([-0.10, -0.40, -0.90])
+        ]
+        for i in range(len(result)):
+            assert np.allclose(result[i], expected_result[i]), f"The obtained results for coordinate {i+1} do not match the expectations."
 
-    result = functions.direct_to_cartesian_coord(a, b, c, direct_coord)
+    def test_lattice_vectors(self):
+        '''In this function is test if changing the sign in the lattice vectors corresponds to changing
+            signs of cartesian coordinates.'''
+        a = np.array([-1.00, 0.00, 0.00])
+        b = np.array([0.00, -2.00, 0.00])
+        c = np.array([0.00, 0.00, -3.00])
+        direct_coord = np.array([[0.25, 0.50, 0.75], [0, 0, 0], [-0.10, -0.20, -0.30] ])
+        result = functions.direct_to_cartesian_coord(a, b, c, direct_coord)
+        expected_result = [
+            np.array([-0.25, -1, -2.25]),
+            np.array([0, 0, 0]),
+            np.array([0.10, 0.40, 0.90])
+        ]
+        for i in range(len(result)):
+            assert np.allclose(result[i], expected_result[i]), f"The obtained results for coordinate {i+1} do not match the expectations."
+    
 
-    expected_result = [
-        np.array([0.25, 1, 2.25]),
-        np.array([0.10, 0.40, 0.90])
-    ]
-    for i in range(len(result)):
-        assert np.allclose(result[i], expected_result[i]), f"The obtained results for coordinate {i+1} do not match the expectations."
-
-def test_reflect_coord():
-    '''This function is a unit test for the "reflect_coord" function.
-
-        Test Steps:
-            -Define a list of coordinate points 'coord_list', representing atomic positions.
-            -Define a plane point 'plane_point' and a plane normal 'plane_normal', which represent the plane used for reflection.
-            -Execute the "reflect_coord" function, passing the coordinate list, plane point, and plane normal as input.
-            -Verify if the returned results match the expected reflected coordinates.'''
+class TestReflectCoords(unittest.TestCase):
     coord_list = [
-        np.array([1.0, 2.0, 3.0]),
-        np.array([4.0, 5.0, 6.0]),
-        np.array([7.0, 8.0, 9.0])
-    ]
-    plane_point = np.array([0.0, 0.0, 0.0])
-    plane_normal = np.array([1.0, 0.0, 0.0])
+    np.array([1.0, 2.0, 3.0]),
+    np.array([4.0, 5.0, 6.0]),
+    np.array([7.0, 8.0, 9.0])]
+    
+    def test_reflect_coord(self):
+        '''This function is a unit test for the "reflect_coord" function.
 
-    result = functions.reflect_coord(coord_list, plane_point, plane_normal)
+            Test Steps:
+                -Define a list of coordinate points 'coord_list', representing atomic positions.
+                -Define a plane point 'plane_point' and a plane normal 'plane_normal', which represent the plane used for reflection.
+                -Execute the "reflect_coord" function, passing the coordinate list, plane point, and plane normal as input.
+                -Verify if the returned results match the expected reflected coordinates.'''
+        plane_point = np.array([0.0, 0.0, 0.0])
+        plane_normal = np.array([1.0, 0.0, 0.0])
 
-    expected_result = [
-        np.array([-1.0, 2.0, 3.0]),
-        np.array([-4.0, 5.0, 6.0]),
-        np.array([-7.0, 8.0, 9.0])
-    ]
+        result = functions.reflect_coord(self.coord_list, plane_point, plane_normal)
 
-    for i in range(len(result)):
-        assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
+        expected_result = [
+            np.array([-1.0, 2.0, 3.0]),
+            np.array([-4.0, 5.0, 6.0]),
+            np.array([-7.0, 8.0, 9.0])
+        ]
+
+        for i in range(len(result)):
+            assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
 
 def test_shift_slab_along_z():
     '''This function is a unit test for the "shift_slab_along_z" function.
