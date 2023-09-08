@@ -1,64 +1,67 @@
 import functions
 import numpy as np
 import os
+import unittest
 
-def test_extract_lattice_vectors():
-    '''This test ensures that the "extract_lattice_vectors" function correctly reads the lattice 
-       vectors from the input file and returns them in the expected format, represented as a dictionary 
-       with keys 'a', 'b', and 'c' mapping to their respective numpy array values.
-       
-       Test Steps:
-        -Create a temporary example file named "lattice_vectors.csv" with lattice vectors.
-        -Execute the "extract_lattice_vectors" function, passing the file path of the created file as input.
-        -Verify if the returned results match the expected lattice vectors.'''
-    lattice_file = 'lattice_vectors.csv'
-    with open(lattice_file, 'w') as f:
-        f.write('# Comments or header information\n')
-        f.write('# More comments or header information\n')
-        f.write('3.45 0.00 0.00\n')
-        f.write('0.00 3.45 0.00\n')
-        f.write('0.00 0.00 5.00\n')
+class TestLatticeVectorsExtraction(unittest.TestCase):
+    def test_extract_lattice_vectors(self):
+        '''This test ensures that the "extract_lattice_vectors" function correctly reads the three generic lattice 
+           vectors from the input file and returns them in the expected format, represented as a dictionary 
+           with keys 'a', 'b', and 'c' mapping to their respective numpy array values.
 
-    result = functions.extract_lattice_vectors(lattice_file)
+           Test Steps:
+            -Create a temporary example file named "lattice_vectors.csv" with lattice vectors.
+            -Execute the "extract_lattice_vectors" function, passing the file path of the created file as input.
+            -Verify if the returned results match the expected lattice vectors.'''
+        lattice_file = 'lattice_vectors.csv'
+        with open(lattice_file, 'w') as f:
+            f.write('# Comments or header information\n')
+            f.write('# More comments or header information\n')
+            f.write('3.45 0.00 0.00\n')
+            f.write('0.00 3.45 0.00\n')
+            f.write('0.00 0.00 5.00\n')
 
-    expected_result = {
-        'a': np.array([3.45, 0.00, 0.00]),
-        'b': np.array([0.00, 3.45, 0.00]),
-        'c': np.array([0.00, 0.00, 5.00])
-    }
-    assert np.array_equal(result['a'], expected_result['a']), "The obtained results for 'a' do not match the expectations."
-    assert np.array_equal(result['b'], expected_result['b']), "The obtained results for 'b' do not match the expectations."
-    assert np.array_equal(result['c'], expected_result['c']), "The obtained results for 'c' do not match the expectations."
- 
-    os.remove(lattice_file)
+        result = functions.extract_lattice_vectors(lattice_file)
 
-def test_extract_atomic_coordinates():
-    '''This test ensures that the "extract_atomic_coordinates" function extracts correctly 
-       the three generic atomic coordinates written in the example text file.
-
-       Test Steps:
-            -Create a temporary example file named "atomic_coordinates.csv" with atomic coordinates.
-            -Execute the "extract_atomic_coordinates" function, passing the file path of the created file as input.
-            -Verify if the returned results match the expected atomic coordinates.'''
-    coordinates_file = 'atomic_coordinates.csv'
-    with open(coordinates_file, 'w') as f:
-        other_info = '#Other information\n'
-        f.writelines([other_info] * 9)
-        f.write('1.23 4.56 7.89\n')
-        f.write('2.34 5.67 8.90\n')
-        f.write('3.45 6.78 9.01\n')
-        f.write('0 0 0\n')
-        f.write('0 0 0\n')
-        f.write('0 0 0\n')
-   
-    result = functions.extract_atomic_coordinates(coordinates_file)
-
-    expected_result = np.array([[1.23, 4.56, 7.89],
-                               [2.34, 5.67, 8.90],
-                               [3.45, 6.78, 9.01]])
-    assert np.array_equal(result, expected_result), "The obtained results do not match the expectations."
+        expected_result = {
+            'a': np.array([3.45, 0.00, 0.00]),
+            'b': np.array([0.00, 3.45, 0.00]),
+            'c': np.array([0.00, 0.00, 5.00])
+        }
+        assert np.array_equal(result['a'], expected_result['a']), "The obtained results for 'a' do not match the expectations."
+        assert np.array_equal(result['b'], expected_result['b']), "The obtained results for 'b' do not match the expectations."
+        assert np.array_equal(result['c'], expected_result['c']), "The obtained results for 'c' do not match the expectations."
     
-    os.remove(coordinates_file)
+        os.remove(lattice_file)
+
+class TestAtomicCoordinatesExtraction(unittest.TestCase):
+    def test_extract_atomic_coordinates(self):
+        '''This test ensures that the "extract_atomic_coordinates" function extracts correctly 
+           the three generic atomic coordinates written in the example text file.
+
+           Test Steps:
+                -Create a temporary example file named "atomic_coordinates.csv" with atomic coordinates.
+                -Execute the "extract_atomic_coordinates" function, passing the file path of the created file as input.
+                -Verify if the returned results match the expected atomic coordinates.'''
+        coordinates_file = 'atomic_coordinates.csv'
+        with open(coordinates_file, 'w') as f:
+            other_info = '#Other information\n'
+            f.writelines([other_info] * 9)
+            f.write('1.23 4.56 7.89\n')
+            f.write('2.34 5.67 8.90\n')
+            f.write('3.45 6.78 9.01\n')
+            f.write('0 0 0\n')
+            f.write('0 0 0\n')
+            f.write('0 0 0\n')
+    
+        result = functions.extract_atomic_coordinates(coordinates_file)
+
+        expected_result = np.array([[1.23, 4.56, 7.89],
+                                   [2.34, 5.67, 8.90],
+                                   [3.45, 6.78, 9.01]])
+        assert np.array_equal(result, expected_result), "The obtained results do not match the expectations."
+
+        os.remove(coordinates_file)
 
 def test_direct_to_cartesian_coord():
     '''This test ensures that the "direct_to_cartesian_coord" function correctly converts
@@ -137,6 +140,7 @@ def test_shift_slab_along_z():
 
     for i in range(len(result)):
         assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
+
 
 def test_C_111_high_symmetry_points():
    '''This function is a unit test for the "C_111_high_symmetry_points" function.
