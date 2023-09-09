@@ -3,6 +3,10 @@ import numpy as np
 import os
 import unittest
 
+'''
+    In this file are defined three classes that contain the test methods for the functions that deal with 
+    data extraction and writing on a txt file. '''
+
 class TestLatticeVectorsExtraction(unittest.TestCase):
     def test_extract_lattice_vectors(self):
         '''This test ensures that the "extract_lattice_vectors" function correctly reads the three generic lattice 
@@ -64,17 +68,26 @@ class TestAtomicCoordinatesExtraction(unittest.TestCase):
         os.remove(coordinates_file)
 
 class TestWriteCoords(unittest.TestCase):
+    '''This class contains the test methods for the function  "write_coords".
+            
+            Attributes:
+                -coords: list of three numpy arrays of shape (3,) representing atomic positions.
+            
+            Methods:
+                -test_write_coords_generic_case: generic case with False and True values chosen randomly.
+                -test_all_false: all three variables set to False.
+                -test_all_true: all three variables set to True.
+                -test_no_coordinates: test case in which 'coords' is an empty list.'''
     coords = [
     np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
     np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
     np.array([5.0071359999999903,   1.4458782853606842  , 0.4115548962189028])]
 
-    def test_write_coords(self):
-        '''This function is a unit test for the "write_coords" function.
+    def test_write_coords_generic_case(self):
+        '''Test generic case with False and True values chosen randomly for 'x_relax','y_relax' and 'z_relax'.
 
         Test Steps:
-            - Define sample input data, including a list of NumPy arrays representing atomic coordinates (coords)
-              and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
+            - Define the boolean values for 'x_relax', 'y_relax', and 'z_relax' in a random way.
             - Call the "write_coords" function with the provided input data to get the result.
             - Compare the obtained result with the expected output to validate the accuracy of the function.'''
         x_relax = True
@@ -90,12 +103,12 @@ class TestWriteCoords(unittest.TestCase):
         assert result == expected_output, "Test failed: Output doesn't match the expected result."
 
     def test_all_false(self):
-        '''This function is a unit test for the "write_coords" function.
-        Test Steps:
-            - Define sample input data, including a list of NumPy arrays representing atomic coordinates (co
-              and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
-            - Call the "write_coords" function with the provided input data to get the result.
-            - Compare the obtained result with the expected output to validate the accuracy of the function.'''
+        '''Test for 'x_relax','y_relax' and 'z_relax' all set to False.
+
+            Test Steps:
+                - Define the boolean values for 'x_relax', 'y_relax', and 'z_relax' to False.
+                - Call the "write_coords" function with the provided input data to get the result.
+                - Compare the obtained result with the expected output to validate the accuracy of the function.'''
         x_relax = False
         y_relax = False
         z_relax = False
@@ -106,12 +119,12 @@ class TestWriteCoords(unittest.TestCase):
         assert result == expected_output, "Test failed: Output doesn't match the expected result."
 
     def test_all_true(self):
-        '''This function is a unit test for the "write_coords" function.
-        Test Steps:
-            - Define sample input data, including a list of NumPy arrays representing atomic coordinates (co
-              and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
-            - Call the "write_coords" function with the provided input data to get the result.
-            - Compare the obtained result with the expected output to validate the accuracy of the function.'''
+        '''Test for 'x_relax','y_relax' and 'z_relax' all set to True.
+
+            Test Steps:
+                - Define the boolean values for 'x_relax', 'y_relax', and 'z_relax' to True.
+                - Call the "write_coords" function with the provided input data to get the result.
+                - Compare the obtained result with the expected output to validate the accuracy of the function.'''
         x_relax = True
         y_relax = True
         z_relax = True
@@ -123,6 +136,13 @@ class TestWriteCoords(unittest.TestCase):
 
 
     def test_no_coordinates(self):
+        '''Test if the function works correctly when an empty list for 'coords' is provided.
+
+            Test Steps:
+                - Define the variable 'coords' equal to an empty list. 
+                - Define the boolean values for 'x_relax', 'y_relax', and 'z_relax'.
+                - Call the "write_coords" function with the provided input data to get the result.
+                - Compare the obtained result with the expected output to validate the accuracy of the function.'''
         coords = []  
         x_relax = True
         y_relax = True
