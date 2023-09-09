@@ -47,7 +47,7 @@ Finally, the lattice vectors of the supercell and the atomic coordinates that co
 4. The files *configuration.txt* and *functions.py* are in common for both clean and decorated interface calculations:
    - *configuration.txt* contains the input variables that needs to be specified by the user.
    - *functions.py* contains all the methods on which the two main scripts are based.
-5. The folder *Tests* contains different files in which the tests of all the methods written in *functions.py* are organized.
+5. The folder *Tests* contains different files in which the tests of all the methods written in *functions.py* are organized. Tests need to be run with the command `python -m unittest Tests/<file name>` in the folder that contains the file *functions.py*.
 
 ## Results
 The output of the code is a text file called POSCAR, written in a readable format for VASP.  
