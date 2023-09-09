@@ -4,8 +4,8 @@ import os
 import unittest
 
 '''
-    In this file are defined three classes that contain the test methods for the functions that deal with 
-    data extraction and writing on a txt file. '''
+    In this file are defined three classes TestLatticeVectorsExtraction, TestAtomicCoordinatesExtraction, TestWriteCoords
+    that contain the test methods for the functions that deal with data extraction and writing on a txt file. '''
 
 class TestLatticeVectorsExtraction(unittest.TestCase):
     def test_extract_lattice_vectors(self):
