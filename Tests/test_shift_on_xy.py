@@ -4,8 +4,13 @@ import os
 import unittest
 from pymatgen.core.structure import Structure
 
+'''
+    In this file are defined the classes TestDiamondHighSymmetryPoints, TestMetalHighSymmetryPoints and TestShiftSlabOnXY.
+    They contain the test methods for the functions that deal with the identification of the high symmetry points of the slabs
+     and the subsequent shift on the xy plane based on these selected sites. '''
+
 class TestDiamondHighSymmetryPoints(unittest.TestCase):
-    '''This class contains unit tests for the function 'C_111_high_symmetry_points'. to verify the accuracy
+    '''This class contains unit tests for the function 'C_111_high_symmetry_points' to verify the accuracy
         of the function's output for different high symmetry point options.
 
         Methods:
@@ -78,8 +83,9 @@ class TestDiamondHighSymmetryPoints(unittest.TestCase):
             functions.C_111_high_symmetry_points(self.C_slab_file, "invalid_site")
 
 class TestMetalHighSymmetryPoints(unittest.TestCase):
-    '''This class contains unit tests for the function 'metal_fcc_111_high_symmetry_points'. to verify the accuracy
+    '''This class contains unit tests for the function 'metal_fcc_111_high_symmetry_points' to verify the accuracy
     of the function's output for different high symmetry point options.
+
     Methods:
         -setUp: Create a temporary example file "metal_slab_file" containing the structure of a Cu(111) slab in POSCAR format.
         -test_hollow_fcc: Test the calculation of coordinates for the "hollow_fcc" high symmetry point.
@@ -155,6 +161,17 @@ class TestMetalHighSymmetryPoints(unittest.TestCase):
 
 
 class TestShiftSlabOnXY(unittest.TestCase):
+    '''This class contains unit tests for the function 'shift_slab_on_xy'. Different limiting cases are investigated 
+    in each of the following methods.
+
+    Methods:
+        -setUp: Create a temporary example file "original_file" containing the structure of a Cu(111) slab in POSCAR format.
+        -test_shift_slab_on_xy: generic example for the shift.
+        -test_shift_slab_positive_direction: case of a positive shift.
+        -test_shift_slab_negative_direction: case of a negative shift.
+        -test_no_shift_required: case of a shift equal to zero.
+        - test_shift_slab_with_nonexistent_file: verify the raise of FileNotFound Error if the file doesn't exist.
+        -tearDown: Clean up after the tests by removing the temporary file. '''
     def setUp(self):
         self.original_file = 'POSCAR_temp'
         with open(self.original_file, 'w') as f:
@@ -178,11 +195,10 @@ class TestShiftSlabOnXY(unittest.TestCase):
             os.remove(self.original_file)
 
     def test_shift_slab_on_xy(self):
-        '''This function is a unit test for the "shift_slab_on_xy" function.
+        '''This function verify that the application of a generic shift leads to the expected results. 
 
             Test Steps:
-              -Create a temporary file named "POSCAR_temp" containing initial atomic coordinates.
-              -Define the selected reference points for Cu and C atoms: selected_site_Cu and selected_site_C.
+              -Define a generic value for the reference points for Cu and C atoms: selected_site_Cu and selected_site_C.
               -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
               -Define the expected output, which represents the shifted coordinates after the x and y shifts.
               -Compare the obtained result with the expected output to validate the accuracy of the function.'''
@@ -203,6 +219,13 @@ class TestShiftSlabOnXY(unittest.TestCase):
             assert np.allclose(result[i], expected_output[i]), f"The obtained results for point {i+1} do not match the expectations."
 
     def test_shift_slab_positive_direction(self):
+        '''This function verify that the application of a positive shift leads to a greater value for the coordinates. 
+    
+            Test Steps:
+              -Define values for selected_site_Cu and selected_site_C so that a positive shift is obtained.
+              -Get the atomic structure of the temporary POSCAR file with pymatgen tools.
+              -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
+              -Check that the shifted coordinates are greater than the initial ones.'''
 
         selected_site_metal = np.array([1.0, 1.0, 0.0])
         selected_site_C = np.array([2.0, 2.0, 0.0])
@@ -213,6 +236,13 @@ class TestShiftSlabOnXY(unittest.TestCase):
                 assert coord[0] > site.coords[0] and coord[1] > site.coords[1]
 
     def test_shift_slab_negative_direction(self):
+        '''This function verify that the application of a negative shift leads to a smaller value for the coordinates. 
+
+            Test Steps:
+              -Define values for selected_site_Cu and selected_site_C so that a negative shift is obtained.
+              -Get the atomic structure of the temporary POSCAR file with pymatgen tools.
+              -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
+              -Check that the shifted coordinates are smaller than the initial ones.'''
 
         selected_site_metal = np.array([2.0, 2.0, 0.0])
         selected_site_C = np.array([1.0, 1.0, 0.0])
@@ -223,6 +253,13 @@ class TestShiftSlabOnXY(unittest.TestCase):
                 assert coord[0] < site.coords[0] and coord[1] < site.coords[1]
 
     def test_no_shift_required(self):
+        '''This function verify that the application of a shift equal to 0 doesn't change the coordinates. 
+
+            Test Steps:
+              -Define values for selected_site_Cu and selected_site_C so that the shift is 0.
+              -Get the atomic structure of the temporary POSCAR file with pymatgen tools.
+              -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
+              -Check that the shifted coordinates are equal to the initial ones.'''
 
         selected_site_metal = np.array([1.0, 1.0, 0.0])
         selected_site_C = np.array([1.0, 1.0, 0.0])
@@ -233,11 +270,16 @@ class TestShiftSlabOnXY(unittest.TestCase):
                 assert coord[0] == site.coords[0] and coord[1] == site.coords[1]
 
     def test_shift_slab_with_nonexistent_file(self):
-        # Remove input file if it exists
+        '''Test that the function raises a FileNotFoundError for a non-existent input file.
+
+            Test Steps:
+                - Check if the input file "nonexistent_file.txt" exists and remove it if it does.
+                - Define selected reference points for metal and C atoms.
+                - Call the shift_slab_on_xy function with the non-existent input file and selected reference points.
+                - Verify that the function raises a FileNotFoundError.'''
         if os.path.exists("nonexistent_file.txt"):
             os.remove("nonexistent_file.txt")
 
-        # Test that the function raises a FileNotFoundError for a non-existent input file.
         selected_site_metal = np.array([1.0, 1.0, 0.0])
         selected_site_C = np.array([2.0, 2.0, 0.0])
         with self.assertRaises(FileNotFoundError):
