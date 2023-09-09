@@ -105,7 +105,45 @@ class TestDirectToCartesian(unittest.TestCase):
         ]
         for i in range(len(result)):
             assert np.allclose(result[i], expected_result[i]), f"The obtained results for coordinate {i+1} do not match the expectations."
-    
+
+class PlaneParameters(unittest.TestCase):
+    def test_z_coord_equal_zero(self):
+        cartesian_coord_xy = [
+            [1.0, 2.0, 0.0],
+            [3.0, 4.0, 0.0],
+            [5.0, 6.0, 0.0],
+        ]
+        plane_point, plane_normal = functions.calculate_plane_parameters(cartesian_coord_xy)
+        expected_plane_point = np.array([0, 0, 0]) 
+        expected_plane_normal = np.array([0, 0, 1])
+        assert np.array_equal(plane_point, expected_plane_point), "Test failed: plane_point doesn't match the expected result."
+        assert np.array_equal(plane_normal, expected_plane_normal), "Test failed: plane_normal doesn't match the expected result."
+
+    def test_x_coord_equal_zero(self):
+        cartesian_coord_yz = [
+            [0.0, 1.0, 2.0],
+            [0.0, 3.0, 4.0],
+            [0.0, 5.0, 6.0],
+        ]
+        plane_point, plane_normal = functions.calculate_plane_parameters(cartesian_coord_yz)
+        expected_plane_point = np.array([0, 0, 6.0])
+        expected_plane_normal = np.array([0, 0, 1]) 
+        assert np.array_equal(plane_point, expected_plane_point), "Test failed: plane_point doesn't match the expected result."
+        assert np.array_equal(plane_normal, expected_plane_normal), "Test failed: plane_normal doesn't match the expected result."
+
+    def test_general_case(self):
+        cartesian_coord_variable_z = [
+            [1.0, 2.0, 5.0],
+            [3.0, 4.0, 8.0],
+            [5.0, 6.0, 2.0],
+            [7.0, 8.0, 7.0],
+        ]
+        plane_point, plane_normal = functions.calculate_plane_parameters(cartesian_coord_variable_z)
+        expected_plane_point = np.array([0, 0, 8.0]) 
+        expected_plane_normal = np.array([0, 0, 1])  
+        assert np.array_equal(plane_point, expected_plane_point), "Test failed: plane_point doesn't match the expected result."
+        assert np.array_equal(plane_normal, expected_plane_normal), "Test failed: plane_normal doesn't match the expected result."
+   
 
 class TestReflectCoords(unittest.TestCase):
     '''This class represents a unit test for the "reflect_coord" function.
