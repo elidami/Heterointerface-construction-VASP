@@ -527,31 +527,76 @@ class TestDistanceBetweenHighestZvalues(unittest.TestCase):
         result = functions.distance_between_highest_z_values(coords)
         assert result == expected_distance, "Test failed: Output doesn't match the expected result."
 
-def test_write_coords():
-    '''This function is a unit test for the "write_coords" function.
-
-    Test Steps:
-        - Define sample input data, including a list of NumPy arrays representing atomic coordinates (coords)
-          and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
-        - Call the "write_coords" function with the provided input data to get the result.
-        - Compare the obtained result with the expected output to validate the accuracy of the function.'''
+class TestWriteCoords(unittest.TestCase):
     coords = [
-        np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
-        np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
-        np.array([5.0071359999999903,   1.4458782853606842  , 0.4115548962189028])
-    ]
-    x_relax = True
-    y_relax = False
-    z_relax = True
+    np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
+    np.array([1.2519332746767966 ,  0.7228036064245595,   0.0583534541551990]),
+    np.array([5.0071359999999903,   1.4458782853606842  , 0.4115548962189028])]
 
-    result = functions.write_coords(coords, x_relax, y_relax, z_relax)
+    def test_write_coords(self):
+        '''This function is a unit test for the "write_coords" function.
 
-    expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  F  T\n', 
-                       '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  F  T\n', 
-                       '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  F  T\n']
+        Test Steps:
+            - Define sample input data, including a list of NumPy arrays representing atomic coordinates (coords)
+              and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
+            - Call the "write_coords" function with the provided input data to get the result.
+            - Compare the obtained result with the expected output to validate the accuracy of the function.'''
+        x_relax = True
+        y_relax = False
+        z_relax = True
 
-    assert result == expected_output, "Test failed: Output doesn't match the expected result."
+        result = functions.write_coords(self.coords, x_relax, y_relax, z_relax)
 
+        expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  F  T\n', 
+                           '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  F  T\n', 
+                           '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  F  T\n']
+
+        assert result == expected_output, "Test failed: Output doesn't match the expected result."
+
+    def test_all_false(self):
+        '''This function is a unit test for the "write_coords" function.
+        Test Steps:
+            - Define sample input data, including a list of NumPy arrays representing atomic coordinates (co
+              and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
+            - Call the "write_coords" function with the provided input data to get the result.
+            - Compare the obtained result with the expected output to validate the accuracy of the function.'''
+        x_relax = False
+        y_relax = False
+        z_relax = False
+        result = functions.write_coords(self.coords, x_relax, y_relax, z_relax)
+        expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    F  F  F\n', 
+                           '1.2519332746767966   0.7228036064245595   0.0583534541551990    F  F  F\n', 
+                           '5.0071359999999903   1.4458782853606842   0.4115548962189028    F  F  F\n']
+        assert result == expected_output, "Test failed: Output doesn't match the expected result."
+
+    def test_all_true(self):
+        '''This function is a unit test for the "write_coords" function.
+        Test Steps:
+            - Define sample input data, including a list of NumPy arrays representing atomic coordinates (co
+              and boolean variables 'x_relax', 'y_relax', and 'z_relax'.
+            - Call the "write_coords" function with the provided input data to get the result.
+            - Compare the obtained result with the expected output to validate the accuracy of the function.'''
+        x_relax = True
+        y_relax = True
+        z_relax = True
+        result = functions.write_coords(self.coords, x_relax, y_relax, z_relax)
+        expected_output = ['2.5035679999999956   1.4454350000000022   9.6615339926441077    T  T  T\n', 
+                           '1.2519332746767966   0.7228036064245595   0.0583534541551990    T  T  T\n', 
+                           '5.0071359999999903   1.4458782853606842   0.4115548962189028    T  T  T\n']
+        assert result == expected_output, "Test failed: Output doesn't match the expected result."
+
+
+    def test_no_coordinates(self):
+        coords = []  
+        x_relax = True
+        y_relax = True
+        z_relax = True
+
+        result = functions.write_coords(coords, x_relax, y_relax, z_relax)
+
+        expected_output = []  
+
+        assert result == expected_output, "Test failed: Output doesn't match the expected result."
 
 
 
