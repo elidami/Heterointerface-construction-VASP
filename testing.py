@@ -2,6 +2,7 @@ import functions
 import numpy as np
 import os
 import unittest
+from pymatgen.core.structure import Structure
 
 class TestLatticeVectorsExtraction(unittest.TestCase):
     def test_extract_lattice_vectors(self):
@@ -389,49 +390,97 @@ class TestMetalHighSymmetryPoints(unittest.TestCase):
             functions.metal_fcc_111_high_symmetry_points(self.metal_slab_file, "invalid_site")
     
 
-def test_shift_slab_on_xy():
-    '''This function is a unit test for the "shift_slab_on_xy" function.
 
-        Test Steps:
-          -Create a temporary file named "POSCAR_temp" containing initial atomic coordinates.
-          -Define the selected reference points for Cu and C atoms: selected_site_Cu and selected_site_C.
-          -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
-          -Define the expected output, which represents the shifted coordinates after the x and y shifts.
-          -Compare the obtained result with the expected output to validate the accuracy of the function.'''
-    original_file = "POSCAR_temp"
-    with open(original_file, "w") as f:
-        f.writelines('Cu 111\n'
-                     '1.0\n'
-                            '2.5699999332         0.0000000000         0.0000000000\n'
-                            '1.2849999666         2.2256852299         0.0000000000\n'
-                            '0.0000000000         0.0000000000        20.491980720\n'
-                     'Cu\n'
-                     '6\n'
-                     'Selective Dynamics\n'
-                     'Cartesian\n'
-                        '0.000000000         0.000000000         0.000000000\n' 
-                        '1.285000005         0.741895099         2.098396222\n' 
-                        '2.569999857         1.483790197         4.196792443\n' 
-                        '0.000000000         0.000000000         6.295188277\n' 
-                        '1.285000005         0.741895099         8.393584886\n' 
-                        '2.569999857         1.483790197        10.491980720\n' )
+class TestShiftSlabOnXY(unittest.TestCase):
+    def setUp(self):
+        self.original_file = 'POSCAR_temp'
+        with open(self.original_file, 'w') as f:
+            f.writelines('Cu 111\n'
+             '1.0\n'
+                    '2.5699999332         0.0000000000         0.0000000000\n'
+                    '1.2849999666         2.2256852299         0.0000000000\n'
+                    '0.0000000000         0.0000000000        20.491980720\n'
+             'Cu\n'
+             '6\n'
+             'Selective Dynamics\n'
+             'Cartesian\n'
+                '0.000000000         0.000000000         0.000000000\n' 
+                '1.285000005         0.741895099         2.098396222\n' 
+                '2.569999857         1.483790197         4.196792443\n' 
+                '0.000000000         0.000000000         6.295188277\n' 
+                '1.285000005         0.741895099         8.393584886\n' 
+                '2.569999857         1.483790197        10.491980720\n' )
+            
+    def tearDown(self):
+            os.remove(self.original_file)
 
-    selected_site_Cu = [0.0, 0.0, 0.0]
-    selected_site_C = [0.5, 0.5, 0.0]
-    result = functions.shift_slab_on_xy(original_file, selected_site_Cu, selected_site_C)
+    def test_shift_slab_on_xy(self):
+        '''This function is a unit test for the "shift_slab_on_xy" function.
 
-    expected_output = [np.array([0.5 ,       0.5 ,  0. ]),
-                       np.array([1.785 ,     1.2418951 , 2.098396222]),
-                       np.array([3.06999986 ,1.9837902 ,  4.19679244]),
-                       np.array([0.5     ,   0.5  ,  6.29518828]),
-                       np.array([1.785     , 1.2418951 , 8.39358489]),
-                       np.array([3.06999986,  1.9837902 , 10.49198072])
-                       ]
+            Test Steps:
+              -Create a temporary file named "POSCAR_temp" containing initial atomic coordinates.
+              -Define the selected reference points for Cu and C atoms: selected_site_Cu and selected_site_C.
+              -Call the shift_slab_on_xy function with the temporary file and the selected reference points to get the result.
+              -Define the expected output, which represents the shifted coordinates after the x and y shifts.
+              -Compare the obtained result with the expected output to validate the accuracy of the function.'''
 
-    for i in range(len(result)):
-        assert np.allclose(result[i], expected_output[i]), f"The obtained results for point {i+1} do not match the expectations."
+        selected_site_Cu = [0.0, 0.0, 0.0]
+        selected_site_C = [0.5, 0.5, 0.0]
+        result = functions.shift_slab_on_xy(self.original_file, selected_site_Cu, selected_site_C)
 
-    os.remove(original_file)
+        expected_output = [np.array([0.5 ,       0.5 ,  0. ]),
+                           np.array([1.785 ,     1.2418951 , 2.098396222]),
+                           np.array([3.06999986 ,1.9837902 ,  4.19679244]),
+                           np.array([0.5     ,   0.5  ,  6.29518828]),
+                           np.array([1.785     , 1.2418951 , 8.39358489]),
+                           np.array([3.06999986,  1.9837902 , 10.49198072])
+                           ]
+
+        for i in range(len(result)):
+            assert np.allclose(result[i], expected_output[i]), f"The obtained results for point {i+1} do not match the expectations."
+
+    def test_shift_slab_positive_direction(self):
+
+        selected_site_metal = np.array([1.0, 1.0, 0.0])
+        selected_site_C = np.array([2.0, 2.0, 0.0])
+        structure = Structure.from_file(self.original_file)
+        result = functions.shift_slab_on_xy(self.original_file, selected_site_metal, selected_site_C)
+
+        for coord, site in zip(result, structure):
+                assert coord[0] > site.coords[0] and coord[1] > site.coords[1]
+
+    def test_shift_slab_negative_direction(self):
+
+        selected_site_metal = np.array([2.0, 2.0, 0.0])
+        selected_site_C = np.array([1.0, 1.0, 0.0])
+        structure = Structure.from_file(self.original_file)
+        result = functions.shift_slab_on_xy(self.original_file, selected_site_metal, selected_site_C)
+
+        for coord, site in zip(result, structure):
+                assert coord[0] < site.coords[0] and coord[1] < site.coords[1]
+
+    def test_no_shift_required(self):
+
+        selected_site_metal = np.array([1.0, 1.0, 0.0])
+        selected_site_C = np.array([1.0, 1.0, 0.0])
+        structure = Structure.from_file(self.original_file)
+        result = functions.shift_slab_on_xy(self.original_file, selected_site_metal, selected_site_C)
+
+        for coord, site in zip(result, structure):
+                assert coord[0] == site.coords[0] and coord[1] == site.coords[1]
+
+    def test_shift_slab_with_nonexistent_file(self):
+        # Remove input file if it exists
+        if os.path.exists("nonexistent_file.txt"):
+            os.remove("nonexistent_file.txt")
+
+        # Test that the function raises a FileNotFoundError for a non-existent input file.
+        selected_site_metal = np.array([1.0, 1.0, 0.0])
+        selected_site_C = np.array([2.0, 2.0, 0.0])
+        with self.assertRaises(FileNotFoundError):
+            functions.shift_slab_on_xy("nonexistent_file.txt", selected_site_metal, selected_site_C)
+
+
 
 def test_distance_between_highest_z_values():
     '''This function is a unit test for the "distance_between_highest_z_values" function.
