@@ -527,6 +527,76 @@ class TestDistanceBetweenHighestZvalues(unittest.TestCase):
         result = functions.distance_between_highest_z_values(coords)
         assert result == expected_distance, "Test failed: Output doesn't match the expected result."
 
+
+class CalculateShiftCleanCase(unittest.TestCase):
+    coord_bottom_slab = [[0.0, 0.0, 0.0], [0.0, 0.0, 2.0], [0.0, 0.0, 4.0]]
+    coord_upper_slab = [[0.0, 0.0, 6.0], [0.0, 0.0, 8.0], [0.0, 0.0, 10.0]]
+
+    def test_equal_interlayer_distances(self):
+        interlayer_distance = 2.0
+        expected_shift_z = -4
+
+        result = functions.calculate_shift_z_clean_case(interlayer_distance, interlayer_distance, self.coord_bottom_slab, self.coord_upper_slab)
+
+        assert result == expected_shift_z, "Test failed: Output doesn't match the expected result."
+
+    def test_calculate_shift_z_different_distances(self):
+        interlayer_distance_bottom = 2.0
+        interlayer_distance_upper = 3.0
+        expected_shift_z = -3.5
+
+        result = functions.calculate_shift_z_clean_case(interlayer_distance_bottom, interlayer_distance_upper, self.coord_bottom_slab, self.coord_upper_slab)
+
+        assert result == expected_shift_z, "Test failed: Output doesn't match the expected result."
+
+    def test_empty_upper_slab(self):
+        interlayer_distance_bottom = 2.0
+        interlayer_distance_upper = 3.0
+        coord_upper_slab = [] 
+
+        with self.assertRaises(ValueError):
+            functions.calculate_shift_z_clean_case(interlayer_distance_bottom, interlayer_distance_upper, self.coord_bottom_slab, coord_upper_slab)
+
+class CalculateShiftDecoratedCase(unittest.TestCase):
+    def test_generic_case(self):
+        coord_bottom_slab = [[0.0, 0.0, 0.0], [0.0, 0.0, 2.0], [0.0, 0.0, 4.0]]
+        coord_adsorption = [[0.0, 0.0, 5.0], [0.0, 0.0, 6.0]]
+        coord_upper_slab = [[0.0, 0.0, 6.0], [0.0, 0.0, 8.0]]
+
+        expected_shift_z = -3
+
+        result = functions.calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_upper_slab)
+
+        assert result == expected_shift_z, "Test failed: Output doesn't match the expected result."
+
+    def test_empty_upper_slab(self):
+        coord_bottom_slab = [[0.0, 0.0, 0.0], [0.0, 0.0, 2.0], [0.0, 0.0, 4.0]]
+        coord_adsorption = [[0.0, 0.0, 5.0]]
+        coord_upper_slab = [] 
+
+        with self.assertRaises(ValueError):
+            functions.calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_upper_slab)
+
+    def test_empty_bottom_slab(self):
+        coord_bottom_slab = []  
+        coord_adsorption = [[0.0, 0.0, 5.0]]
+        coord_upper_slab = [[0.0, 0.0, 6.0], [0.0, 0.0, 8.0]]
+
+        with self.assertRaises(ValueError):
+            functions.calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_upper_slab)
+
+    def test_empty_coord_adsorption(self):
+        coord_bottom_slab = [[0.0, 0.0, 0.0], [0.0, 0.0, 2.0], [0.0, 0.0, 4.0]]
+        coord_adsorption = []  
+        coord_upper_slab = [[0.0, 0.0, 6.0], [0.0, 0.0, 8.0]]
+
+        with self.assertRaises(IndexError):
+                functions.calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_upper_slab)
+
+
+
+
+
 class TestWriteCoords(unittest.TestCase):
     coords = [
     np.array([2.5035679999999956 ,  1.4454350000000022,   9.6615339926441077 ]),
