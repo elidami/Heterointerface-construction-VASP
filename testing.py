@@ -481,26 +481,51 @@ class TestShiftSlabOnXY(unittest.TestCase):
             functions.shift_slab_on_xy("nonexistent_file.txt", selected_site_metal, selected_site_C)
 
 
+class TestDistanceBetweenHighestZvalues(unittest.TestCase):
+    def test_distance_between_highest_z_values(self):
+        '''This function is a unit test for the "distance_between_highest_z_values" function.
 
-def test_distance_between_highest_z_values():
-    '''This function is a unit test for the "distance_between_highest_z_values" function.
+            Test Steps:
+                -Define a sample set of atomic coordinates (coords).
+                -Define the expected value for the distance.
+                -Call the distance_between_highest_z_values function with the provided coordinates to get the result.
+                -Compare the obtained result with the expected distance to validate the accuracy of the function.'''
+        coords = [
+            [1.0, 2.0, 5.0],
+            [3.0, 4.0, 8.0],
+            [5.0, 6.0, 2.0],
+            [7.0, 8.0, 7.0],
+        ]
 
-        Test Steps:
-            -Define a sample set of atomic coordinates (coords).
-            -Define the expected value for the distance.
-            -Call the distance_between_highest_z_values function with the provided coordinates to get the result.
-            -Compare the obtained result with the expected distance to validate the accuracy of the function.'''
-    coords = [
-        [1.0, 2.0, 5.0],
-        [3.0, 4.0, 8.0],
-        [5.0, 6.0, 2.0],
-        [7.0, 8.0, 7.0],
-    ]
+        expected_distance=1.0
+        result = functions.distance_between_highest_z_values(coords)
 
-    expected_distance=1.0
-    result = functions.distance_between_highest_z_values(coords)
+        assert result == expected_distance, "Test failed: Output doesn't match the expected result."
 
-    assert result == expected_distance, "Test failed: Output doesn't match the expected result."
+    def test_multiple_points_highest_z(self):
+
+        coords = [
+            [1.0, 2.0, 5.0],
+            [3.0, 4.0, 8.0],
+            [5.0, 6.0, 8.0],
+            [7.0, 8.0, 7.0],
+        ]
+
+        expected_distance=0
+        result = functions.distance_between_highest_z_values(coords)
+
+        assert result == expected_distance, "Test failed: Output doesn't match the expected result."
+
+    def test_distance_with_negative_z_values(self):
+        coords = [
+            [1.0, 2.0, -5.0],
+            [3.0, 4.0, -8.0],
+            [5.0, 6.0, -2.0],
+            [7.0, 8.0, -7.0],
+        ]
+        expected_distance = abs(coords[0][2] - coords[2][2])
+        result = functions.distance_between_highest_z_values(coords)
+        assert result == expected_distance, "Test failed: Output doesn't match the expected result."
 
 def test_write_coords():
     '''This function is a unit test for the "write_coords" function.
