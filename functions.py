@@ -210,15 +210,15 @@ def  shift_slab_on_xy(file_path, selected_site_metal, selected_site_C):
 def distance_between_highest_z_values(coord):
     '''This method calculates the distance between the two highest z-values 
        in a list of coordinates.
+       The function first sorts the coordinates based on their z-values in descending order. 
+        It then selects the two coordinates with the highest z-values and calculates the 
+        difference between these two values to obtain the distance.
 
        Args:
             coord: A list of numpy arrays with shape (3,) representing the atomic coordinates.
 
        Returns:
-            The distance between the two highest z-values among the coordinates. 
-            The function first sorts the coordinates based on their z-values in descending order. 
-            It then selects the two coordinates with the highest z-values and calculates the 
-            difference between these two values to obtain the distance.'''
+            Float number representing the distance between the two highest z-values among the coordinates.'''
     sorted_coord = sorted(coord, key=lambda x: x[2], reverse=True)
     highest_z_values = sorted_coord[:2]
     distance = highest_z_values[0][2] - highest_z_values[1][2]
@@ -286,6 +286,9 @@ def shift_slab_along_z(coord_list, shift_z):
 def write_coords(coords, x_relax, y_relax, z_relax):
     '''This method converts a list of atomic coordinates and relaxation options 
        into a formatted string representation.
+       The function iterates over the input coordinates and converts each 
+        coordinate to a string with a specific format. The relaxation options (x_relax, y_relax, z_relax) 
+        are represented by "T" (True) or "F" (False) and appended to the string.
 
        Args:
             coords: A list of numpy arrays with shape (3,) representing the atomic coordinates.
@@ -294,10 +297,8 @@ def write_coords(coords, x_relax, y_relax, z_relax):
             z_relax: A boolean value indicating whether the relaxation is allowed along the z-direction.
 
        Returns:
-            A list of strings, each representing a formatted line of atomic coordinates along with 
-            the relaxation options. The function iterates over the input coordinates and converts each 
-            coordinate to a string with a specific format. The relaxation options (x_relax, y_relax, z_relax) 
-            are represented by "T" (True) or "F" (False) and appended to the string.'''
+            List of strings, each representing a formatted line of atomic coordinates along with 
+            the relaxation options. '''
     atom_coords = []
     for coord in coords:
         coord_string = "{}  {}  {}  {}\n".format(
@@ -312,6 +313,8 @@ def write_coords(coords, x_relax, y_relax, z_relax):
 def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_bottom_slab, 
                            x_relax, y_relax, z_relax, cartesian_coord_upper_slab, a,b,c):
     '''This method creates a new POSCAR file representing the interface between two slabs.
+      It combines the header, lattice vectors, atom types, and atom numbers from the input files for the bottom and upper slabs. 
+        The Cartesian coordinates of the atoms in the interface supercell are written along with their relaxation options.
 
         Args:
             input_file_upper: the path to the input file containing the structure information of the upper slab.
@@ -322,9 +325,7 @@ def write_POSCAR_interface(input_file_upper, input_file_bottom,cartesian_coord_b
             a, b, c: three lattice vectors representing the lattice of the interface structure.
 
         Returns:
-            A new POSCAR file that represents the interface between the two slabs. 
-            It combines the header, lattice vectors, atom types, and atom numbers from the input files for the bottom and upper slabs. 
-            The Cartesian coordinates of the atoms in the interface supercell are written along with their relaxation options.'''
+            New text file, named POSCAR, that represents the interface between the two slabs. '''
     with open(input_file_upper, 'r') as f:
         upper_slab_lines = f.readlines()
         headerUpperSlab = upper_slab_lines[0].strip()
