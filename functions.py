@@ -92,21 +92,6 @@ def reflect_coord(coord_list, plane_point, plane_normal):
         reflected_coord.append(reflected_point)
     return reflected_coord
 
-def shift_slab_along_z(coord_list, shift_z):
-    '''This method shifts a list of points in the z direction.
-    
-        Args:
-            coord_list: list of numpy array of shape (3,) representing atomic coordinates.
-            shift_z: the amount of shift to be applied along the z-axis.
-    
-        Returns:
-            List of numpy arrays of shape (3,) representing the shifted points along z.'''
-    shifted_coords = []
-    for coord in coord_list:
-        shifted_coord = np.array([coord[0], coord[1], coord[2] + shift_z])
-        shifted_coords.append(shifted_coord)
-    return shifted_coords
-
 def C_111_high_symmetry_points(file_path, selected_site):
     '''This method searches the high symmetry points of (1x1)C(111) slab with single 
         dangling bond termination. These points will play the role of reference sites
@@ -281,6 +266,21 @@ def calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_
     shift_z = max_z_bottom_slab + distance_between_highest_z_values(coord_adsorption) - max_z_upper_slab
 
     return shift_z
+
+def shift_slab_along_z(coord_list, shift_z):
+    '''This method shifts a list of points in the z direction.
+    
+        Args:
+            coord_list: list of numpy array of shape (3,) representing atomic coordinates.
+            shift_z: the amount of shift to be applied along the z-axis.
+    
+        Returns:
+            List of numpy arrays of shape (3,) representing the shifted points along z.'''
+    shifted_coords = []
+    for coord in coord_list:
+        shifted_coord = np.array([coord[0], coord[1], coord[2] + shift_z])
+        shifted_coords.append(shifted_coord)
+    return shifted_coords
 
 
 def write_coords(coords, x_relax, y_relax, z_relax):

@@ -3,71 +3,9 @@ import numpy as np
 import unittest
 
 '''
-    In this file are defined the classes TestShiftAlongZ, TestDistanceBetweenHighestZvalues, CalculateShiftZCleanCase
-    and CalculateShiftZDecoratedCase.
+    In this file are defined the classes TestDistanceBetweenHighestZvalues, CalculateShiftZCleanCase,
+    CalculateShiftZDecoratedCase and TestShiftAlongZ.
     They contain the test methods for the functions that deal with the shift of a slab along the z direction. '''
-
-
-class TestShiftAlongZ(unittest.TestCase):
-    '''This class represents a unit test for the "shift_slab_along_z" function. Differen cases are investigated 
-    in each of the following methods.
-
-            Attributes:
-                 -coord_list: list of three numpy arrays of shape (3,) representing atomic positions.
-
-            Methods:
-                 -test_generic_shift: test of a generic case.
-                 -test_shift_zero: test for the case of a shift equal to zero.
-                 -test_return_to_initial_conditions: test for the application of two subsquent shifts that return to the initial condition.'''
-    coord_list = [
-    np.array([1.0, 2.0, 3.0]),
-    np.array([4.0, 5.0, 6.0]),
-    np.array([7.0, 8.0, 9.0])]
-
-    def test_generic_shift(self):
-        '''This function test a generic positive shift along the z direction.
-
-            Test Steps:
-                -Define a generic positive value 'shift_z', representing the amount of displacement in the z-direction.
-                -Execute the "shift_slab_along_z" function, passing the coordinate list and shift value as input.
-                -Verify if the returned results match the expected coordinates after the z-direction shift.'''
-        shift_z = 2.0
-        result = functions.shift_slab_along_z(self.coord_list, shift_z)
-        expected_result = [
-            np.array([1.0, 2.0, 5.0]),
-            np.array([4.0, 5.0, 8.0]),
-            np.array([7.0, 8.0, 11.0])]
-
-        for i in range(len(result)):
-            assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
-
-    def test_shift_zero(self):
-        '''This test verify that by applying a shift of 0 no change in the coordinates is applied.
-
-            Test Steps:
-                -Define a value for 'shift_z' of 0.
-                -Execute the "shift_slab_along_z" function, passing the coordinate list and shift value as input.
-                -Verify if the returned results match the initial coordinate list.'''
-        shift_z = 0
-        result = functions.shift_slab_along_z(self.coord_list, shift_z)
-        for i in range(len(result)):
-            assert np.array_equal(result[i], self.coord_list[i]), f"The obtained results for point {i+1} do not match the expectations."
-
-    def test_return_to_initial_conditions(self):
-        '''This test verify if the application of a positive shift and the subsequent negative shift of the same 
-           amount lead to the inital coordinate values.
-
-            Test Steps:
-                -Define two shifts 'first_shift_z' and 'second_shift_z' that are equal except for their signs.
-                -Execute the "shift_slab_along_z" function, passing the coordinate list and the first shift value as input.
-                -Execute the "shift_slab_along_z" function a second time, applying the second shift value to the coordinates just obtained.
-                -Verify if the returned results match the initial coordinate list.'''
-        first_shift_z = 2.0
-        second_shift_z = -2.0
-        first_result = functions.shift_slab_along_z(self.coord_list, first_shift_z)
-        final_result = functions.shift_slab_along_z(first_result, second_shift_z)
-        for i in range(len(final_result)):
-            assert np.array_equal(final_result[i], self.coord_list[i]), f"The obtained results for point {i+1} do not match the expectations."
 
 
 class TestDistanceBetweenHighestZvalues(unittest.TestCase):
@@ -274,6 +212,69 @@ class CalculateShiftZDecoratedCase(unittest.TestCase):
 
         with self.assertRaises(IndexError):
                 functions.calculate_shift_z_decorated_case(coord_bottom_slab, coord_adsorption, coord_upper_slab)
+
+
+class TestShiftAlongZ(unittest.TestCase):
+    '''This class represents a unit test for the "shift_slab_along_z" function. Differen cases are investigated 
+    in each of the following methods.
+
+            Attributes:
+                 -coord_list: list of three numpy arrays of shape (3,) representing atomic positions.
+
+            Methods:
+                 -test_generic_shift: test of a generic case.
+                 -test_shift_zero: test for the case of a shift equal to zero.
+                 -test_return_to_initial_conditions: test for the application of two subsquent shifts that return to the initial condition.'''
+    coord_list = [
+    np.array([1.0, 2.0, 3.0]),
+    np.array([4.0, 5.0, 6.0]),
+    np.array([7.0, 8.0, 9.0])]
+
+    def test_generic_shift(self):
+        '''This function test a generic positive shift along the z direction.
+
+            Test Steps:
+                -Define a generic positive value 'shift_z', representing the amount of displacement in the z-direction.
+                -Execute the "shift_slab_along_z" function, passing the coordinate list and shift value as input.
+                -Verify if the returned results match the expected coordinates after the z-direction shift.'''
+        shift_z = 2.0
+        result = functions.shift_slab_along_z(self.coord_list, shift_z)
+        expected_result = [
+            np.array([1.0, 2.0, 5.0]),
+            np.array([4.0, 5.0, 8.0]),
+            np.array([7.0, 8.0, 11.0])]
+
+        for i in range(len(result)):
+            assert np.array_equal(result[i], expected_result[i]), f"The obtained results for point {i+1} do not match the expectations."
+
+    def test_shift_zero(self):
+        '''This test verify that by applying a shift of 0 no change in the coordinates is applied.
+
+            Test Steps:
+                -Define a value for 'shift_z' of 0.
+                -Execute the "shift_slab_along_z" function, passing the coordinate list and shift value as input.
+                -Verify if the returned results match the initial coordinate list.'''
+        shift_z = 0
+        result = functions.shift_slab_along_z(self.coord_list, shift_z)
+        for i in range(len(result)):
+            assert np.array_equal(result[i], self.coord_list[i]), f"The obtained results for point {i+1} do not match the expectations."
+
+    def test_return_to_initial_conditions(self):
+        '''This test verify if the application of a positive shift and the subsequent negative shift of the same 
+           amount lead to the inital coordinate values.
+
+            Test Steps:
+                -Define two shifts 'first_shift_z' and 'second_shift_z' that are equal except for their signs.
+                -Execute the "shift_slab_along_z" function, passing the coordinate list and the first shift value as input.
+                -Execute the "shift_slab_along_z" function a second time, applying the second shift value to the coordinates just obtained.
+                -Verify if the returned results match the initial coordinate list.'''
+        first_shift_z = 2.0
+        second_shift_z = -2.0
+        first_result = functions.shift_slab_along_z(self.coord_list, first_shift_z)
+        final_result = functions.shift_slab_along_z(first_result, second_shift_z)
+        for i in range(len(final_result)):
+            assert np.array_equal(final_result[i], self.coord_list[i]), f"The obtained results for point {i+1} do not match the expectations."
+
 
 
 
